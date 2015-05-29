@@ -49,7 +49,7 @@ public abstract class Test extends Thread
     protected synchronized int getPort(String machine)
     {
         try {
-            String command = "java -cp staf.jar PortStatus " + currentPort;
+            String command = "java -cp staf.jar com.kaazing.star_aeron.util.PortStatus " + currentPort;
             String timeout = "5s";
             final String request = "START SHELL COMMAND " + STAFUtil.wrapData(command) +
                     " WAIT " + timeout + " RETURNSTDOUT STDERRTOSTDOUT";
