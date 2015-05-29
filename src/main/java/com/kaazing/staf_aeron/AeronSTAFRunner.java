@@ -28,8 +28,8 @@ public class AeronSTAFRunner
     public AeronSTAFRunner()
     {
         threadPool = Executors.newFixedThreadPool(5);
-        threadPool.execute(new Test0000(EMPTY, EMPTY));
-        threadPool.execute(new Test0005(EMPTY, EMPTY));
+        threadPool.execute(new Test0000(EMPTY, EMPTY).validate());
+        threadPool.execute(new Test0005(EMPTY, EMPTY).validate());
 
         try
         {
@@ -39,11 +39,6 @@ public class AeronSTAFRunner
         {
             e.printStackTrace();
         }
-    }
-    public int stafHelper(final String[] args)
-    {
-
-        return 0;
     }
 
     public static void main(String[] args)

@@ -51,8 +51,12 @@ public class Test0000 extends Test
         {
             e.printStackTrace();
         }
+    }
 
+    public Test validate()
+    {
         final Map result1 = processes.get("Test0000-sub").getResults();
         final Map result2 = processes.get("Test0000-pub").getResults();
+        return this;
     }
 }

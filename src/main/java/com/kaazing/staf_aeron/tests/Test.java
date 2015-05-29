@@ -20,9 +20,10 @@ package com.kaazing.staf_aeron.tests;
 import com.kaazing.staf_aeron.AeronSTAFProcess;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-public class Test extends Thread
+public abstract class Test extends Thread
 {
     protected HashMap<String, AeronSTAFProcess> processes = null;
     protected static final String CLASSPATH = "TODO";
@@ -37,4 +38,6 @@ public class Test extends Thread
     {
         processes.get(name).kill();
     }
+
+    public abstract Test validate();
 }

@@ -18,6 +18,7 @@ package com.kaazing.staf_aeron;
 
 import com.ibm.staf.*;
 
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -44,57 +45,59 @@ public class AeronSTAFProcess
         this.command = command;
         this.completionLatch = completionLatch;
         this.timeout = timeout;
+        this.name = name;
 
-        try
-        {
+        try {
             handle = new STAFHandle(name);
-        }
-        catch (STAFException e)
-        {
+        } catch (STAFException e) {
             e.printStackTrace();
         }
     }
 
     public void run()
     {
-        try
-        {
+        try {
             final String request = "START SHELL COMMAND " + STAFUtil.wrapData(command) +
                     " WAIT " + timeout + "s RETURNSTDOUT STDERRTOSTDOUT";
-            final Runnable task = new Runnable()
-            {
-                public void run()
-                {
+            final Runnable task = new Runnable() {
+                public void run() {
                     result = handle.submit2(machine, SERVICE, request);
-                    if (result.rc != 0)
-                    {
-                        System.out.println("ERROR: STAF " + machine + " " + SERVICE + " " + request +
-                                " RC: " + result.rc + ", Result: " + result.result);
+                    if (result.rc != 0) {
+                        try {
+                            PrintWriter output = new PrintWriter(name + ".log");
+                            output.println("ERROR: STAF " + machine + " " + SERVICE + " " + request +
+                                    " RC: " + result.rc + ", Result: " + result.result);
+                            output.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         System.exit(1);
                     }
                 }
             };
             final Thread work = new Thread(task);
             work.start();
-            work.join(timeout);
+            Thread.sleep(timeout * 2000);
 
             final Map resultMap = (Map)result.resultObj;
             final String processRC = (String)resultMap.get("rc");
 
-            if (!processRC.equals("0"))
-            {
-                System.out.println("ERROR: Process RC is not 0.\n");
+            if (!processRC.equals("0")) {
+                PrintWriter output = new PrintWriter(name + ".log");
+                output.println("ERROR: Process RC is not 0.\n");
+                final List returnedFileList = (List)resultMap.get("fileList");
+                final Map stdoutMap = (Map)returnedFileList.get(0);
+                output.println((String)stdoutMap.get("data"));
+                output.close();
                 System.exit(1);
             }
 
             final List returnedFileList = (List)resultMap.get("fileList");
             final Map stdoutMap = (Map)returnedFileList.get(0);
             final String stdoutData = (String)stdoutMap.get("data");
-            System.out.println("Process Stdout:\n" + stdoutData);
+
             completionLatch.countDown();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -103,8 +106,7 @@ public class AeronSTAFProcess
     {
         final String request = "STOP HANDLE " + handle.getHandle() + "USING SIGKILL";
         final STAFResult result = handle.submit2(machine, SERVICE, request);
-        if (result.rc != 0)
-        {
+        if (result.rc != 0) {
             System.out.println("ERROR: STAF " + machine + " " + SERVICE + " " + request +
                     " RC: " + result.rc + ", Result: " + result.result);
             System.exit(1);
