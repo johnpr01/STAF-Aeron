@@ -1,3 +1,5 @@
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.LocatorEx
+
 /*
  * Copyright 2015 Kaazing Corporation
  *
@@ -21,7 +23,10 @@ apply plugin: 'java'
 apply plugin: 'maven'
 //apply plugin: 'shadow'
 
-defaultTasks 'clean', 'build'
+defaultTasks 'clean', 'build', 'install'
+
+version='0.1-SNAPSHOT'
+group='com.kaazing'
 
 repositories {
   jcenter()
