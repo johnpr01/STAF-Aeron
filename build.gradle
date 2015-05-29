@@ -21,7 +21,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 //apply plugin: 'shadow'
 
-//defaultTasks 'clean', 'build', 'install'
+defaultTasks 'clean', 'build'
 
 repositories {
   jcenter()
