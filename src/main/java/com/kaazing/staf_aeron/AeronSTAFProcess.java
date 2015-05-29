@@ -59,8 +59,7 @@ public class AeronSTAFProcess
         try {
             final String request = "START SHELL COMMAND " + STAFUtil.wrapData(command) +
                     " WAIT " + timeout + "s RETURNSTDOUT STDERRTOSTDOUT";
-            final Runnable task = new Runnable() {
-                public void run() {
+            Runnable task = () -> {
                     result = handle.submit2(machine, SERVICE, request);
                     if (result.rc != 0) {
                         try {
@@ -73,7 +72,6 @@ public class AeronSTAFProcess
                         }
                         System.exit(1);
                     }
-                }
             };
             final Thread work = new Thread(task);
             work.start();
