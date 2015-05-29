@@ -25,7 +25,7 @@ import java.util.concurrent.CountDownLatch;
 public class Test extends Thread
 {
     protected HashMap<String, AeronSTAFProcess> processes = null;
-    protected static final String CLASSPATH = "/home/philip/work/aeron-staf/aeron-staf/build/libs/staf.jar";
+    protected static final String CLASSPATH = "TODO";
     protected CountDownLatch latch = null;
 
     protected void startProcess(final String machine, final String command, final String name, final int timeout)
