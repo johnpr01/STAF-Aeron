@@ -17,8 +17,12 @@
 package com.kaazing.staf_aeron.tests;
 
 
+import com.ibm.staf.STAFHandle;
+import com.ibm.staf.STAFResult;
+import com.ibm.staf.STAFUtil;
 import com.kaazing.staf_aeron.AeronSTAFProcess;
 
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -28,10 +32,11 @@ public abstract class Test extends Thread
     protected HashMap<String, AeronSTAFProcess> processes = null;
     protected static final String CLASSPATH = "TODO";
     protected CountDownLatch latch = null;
+    private static int currentPort = 1000;
 
     protected void startProcess(final String machine, final String command, final String name, final int timeout)
     {
-        processes.put(name, new AeronSTAFProcess(machine, command, name, latch, timeout));
+        processes.put(name, new AeronSTAFProcess(machine, command, name, latch, timeout).run());
     }
 
     protected void killProcess(final String name)
@@ -40,4 +45,25 @@ public abstract class Test extends Thread
     }
 
     public abstract Test validate();
+
+    protected synchronized int getPort(String machine)
+    {
+        try {
+            String command = "java -cp staf.jar PortStatus " + currentPort;
+            String timeout = "5s";
+            final String request = "START SHELL COMMAND " + STAFUtil.wrapData(command) +
+                    " WAIT " + timeout + " RETURNSTDOUT STDERRTOSTDOUT";
+            STAFHandle tmp = new STAFHandle("port");
+            STAFResult result = tmp.submit2(machine, "Process", request);
+            if (result.rc != 0) {
+                currentPort++;
+                return getPort(machine);
+            } else {
+                return currentPort++;
+            }
+        } catch (Exception e) {
+            return 0;
+        }
+
+    }
 }

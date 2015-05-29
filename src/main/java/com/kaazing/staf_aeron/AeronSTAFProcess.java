@@ -54,7 +54,7 @@ public class AeronSTAFProcess
         }
     }
 
-    public void run()
+    public AeronSTAFProcess run()
     {
         try {
             final String request = "START SHELL COMMAND " + STAFUtil.wrapData(command) +
@@ -94,6 +94,8 @@ public class AeronSTAFProcess
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return this;
     }
 
     public void kill()
@@ -104,6 +106,11 @@ public class AeronSTAFProcess
             System.out.println("ERROR: STAF " + machine + " " + SERVICE + " " + request +
                     " RC: " + result.rc + ", Result: " + result.result);
             System.exit(1);
+        }
+        try {
+            completionLatch.countDown();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

@@ -24,6 +24,9 @@ public class AeronSTAFRunner
 {
     private ExecutorService threadPool = null;
     private static final String[] EMPTY = { "" };
+    private int startPort = 1024;
+    private int endPort = 3000;
+    private int currentPort = startPort;
 
     public AeronSTAFRunner()
     {
@@ -39,6 +42,11 @@ public class AeronSTAFRunner
         {
             e.printStackTrace();
         }
+    }
+
+    public void enqueueTest()
+    {
+
     }
 
     public static void main(String[] args)

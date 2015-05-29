@@ -29,18 +29,19 @@ public class Test0000 extends Test
         processes = new HashMap<String, AeronSTAFProcess>();
         latch = new CountDownLatch(2);
         final String aeronDir = "-Daeron.dir=/tmp/" + this.getClass().getSimpleName();
+        int port = getPort("local");
 
         startProcess("local",
                 "/usr/local/java/bin/java " + aeronDir + "/sub " + properties[0] +
                         " -cp " + CLASSPATH +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " --driver=embedded -m=1000000 -c=udp://localhost:44444 " + options[0],
+                        " --driver=embedded -m=1000000 -c=udp://localhost:" + port + " " + options[0],
                 "Test0000-sub", 10);
         startProcess("local",
                 "/usr/local/java/bin/java " + aeronDir + "/pub" + properties[1] +
                         " -cp " + CLASSPATH +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " --driver=embedded -m=1000000 -c=udp://localhost:44444 " + options[1],
+                        " --driver=embedded -m=1000000 -c=udp://localhost:" + port + " " + options[1],
                 "Test0000-pub", 10);
 
         try
