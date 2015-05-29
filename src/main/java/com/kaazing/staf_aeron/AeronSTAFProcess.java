@@ -90,10 +90,6 @@ public class AeronSTAFProcess
                 System.exit(1);
             }
 
-            final List returnedFileList = (List)resultMap.get("fileList");
-            final Map stdoutMap = (Map)returnedFileList.get(0);
-            final String stdoutData = (String)stdoutMap.get("data");
-
             completionLatch.countDown();
         } catch (Exception e) {
             e.printStackTrace();
