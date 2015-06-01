@@ -1,0 +1,9 @@
+STAFHosts:
+    - hostName: buckwasher
+      ipAddress: 192.168.14.34
+      os: linux
+      classpath: "/home/mtiddens/tools.jar"
+    - hostName: mtserver
+      ipAddress: 192.168.14.12
+      os: linux
+      classpath: "/home/mtiddens/tools.jar"

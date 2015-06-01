@@ -38,7 +38,10 @@ compileJava {
 }
 
 dependencies {
-  compile 'commons-cli:commons-cli:1.2', 'net.sf.staf:jstaf:3.4.4'
+  compile 'commons-cli:commons-cli:1.2',
+          'net.sf.staf:jstaf:3.4.4',
+          'org.yaml:snakeyaml:1.15',
+          'junit:junit:4.12'
 }
 
 //shadow {
