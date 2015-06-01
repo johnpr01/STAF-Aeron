@@ -64,8 +64,8 @@ public class Test0005 extends Test
 
     public Test validate()
     {
-        final Map result1 = processes.get("Test0000-sub").getResults();
-        final Map result2 = processes.get("Test0000-pub").getResults();
+        final Map result1 = processes.get("Test0005-sub").getResults();
+        final Map result2 = processes.get("Test0005-pub").getResults();
         return this;
     }
 }
