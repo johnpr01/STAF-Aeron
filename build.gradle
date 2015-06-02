@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-apply plugin: 'maven'
-apply plugin: 'signing'
 apply plugin: 'eclipse'
-apply plugin: 'java'
-apply plugin: 'maven'
-//apply plugin: 'shadow'
 
 defaultTasks 'clean', 'build', 'install'
 
 version='0.1-SNAPSHOT'
 group='com.kaazing'
+
 
 repositories {
   jcenter()
@@ -32,22 +28,46 @@ repositories {
   mavenLocal()
 }
 
-compileJava {
-  sourceCompatibility = 1.8
-  targetCompatibility = 1.8
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:0.8'
+    }
 }
 
-dependencies {
-  compile 'commons-cli:commons-cli:1.2',
-          'net.sf.staf:jstaf:3.4.4',
-          'org.yaml:snakeyaml:1.15',
-          'junit:junit:4.12'
-}
+//project() {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'shadow'
 
-//shadow {
- // outputFile = new File('STAF-Aeron/build/libs/staf-aeron.jar')
-//}
+    compileJava {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 
-//build.doLast {
-//  tasks.shadowJar.execute()
+    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+    dependencies {
+        compile 'commons-cli:commons-cli:1.2',
+                'net.sf.staf:jstaf:3.4.4',
+                'org.yaml:snakeyaml:1.15'
+        testCompile 'junit:junit:4.12',
+                'org.hamcrest:hamcrest-all:1.3',
+                'junit:junit:4.12',
+                'org.mockito:mockito-all:1.10.19'
+    }
+
+    test {
+        environment "LD_LIBRARY_PATH", "/usr/local/staf/lib"
+    }
+
+    shadow {
+        outputFile = new File('build/libs/staf-aeron.jar')
+    }
+
+    build.doLast {
+        tasks.shadowJar.execute()
+    }
 //}
