@@ -54,6 +54,16 @@ public class Test0075 extends Test
         }
         // suspend the publisher. After ~5sec the publisher is resumed. Repeat test using different kill method
         // (i.e kill publisher via Ctrl-C and restart)
+        pauseProcess("Test0075-pub");
+        try
+        {
+            Thread.sleep(5000);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        resumeProcess("Test0075-pub");
         try
         {
             latch.await();
