@@ -100,15 +100,16 @@ public class AeronSTAFProcess
 
     public void kill()
     {
-        final String request = "STOP HANDLE " + handle.getHandle() + "USING SIGKILL";
-        final STAFResult result = handle.submit2(machine, SERVICE, request);
-        if (result.rc != 0) {
-            System.out.println("ERROR: STAF " + machine + " " + SERVICE + " " + request +
-                    " RC: " + result.rc + ", Result: " + result.result);
-            System.exit(1);
-        }
         try {
-            completionLatch.countDown();
+            final STAFHandle killHandle = new STAFHandle("kill-" + name);
+            final String request = "STOP HANDLE " + handle.getHandle() + "USING SIGKILL";
+            final STAFResult result = killHandle.submit2(machine, SERVICE, request);
+            if (result.rc != 0) {
+                System.out.println("ERROR: STAF " + machine + " " + SERVICE + " " + request +
+                        " RC: " + result.rc + ", Result: " + result.result);
+                System.exit(1);
+            }
+            killHandle.unRegister();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -116,17 +117,18 @@ public class AeronSTAFProcess
 
     public void pause()
     {
-        final String request = "START SHELL COMMAND " + STAFUtil.wrapData("kill -SIGSTOP " + handle.getHandle()) +
-                " WAIT " + timeout + "s RETURNSTDOUT STDERRTOSTDOUT";
-
-        final STAFResult result = handle.submit2(machine, SERVICE, request);
-        if (result.rc != 0) {
-            System.out.println("ERROR: STAF " + machine + " " + SERVICE + " " + request +
-                    " RC: " + result.rc + ", Result: " + result.result);
-            System.exit(1);
-        }
         try {
-            completionLatch.countDown();
+            final STAFHandle pauseHandle = new STAFHandle("pause-" + name);
+            final String request = "START SHELL COMMAND " + STAFUtil.wrapData("kill -SIGSTOP " + handle.getHandle()) +
+                    " WAIT " + timeout + "s RETURNSTDOUT STDERRTOSTDOUT";
+
+            final STAFResult result = pauseHandle.submit2(machine, SERVICE, request);
+            if (result.rc != 0) {
+                System.out.println("ERROR: STAF " + machine + " " + SERVICE + " " + request +
+                        " RC: " + result.rc + ", Result: " + result.result);
+                System.exit(1);
+            }
+            pauseHandle.unRegister();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -134,16 +136,17 @@ public class AeronSTAFProcess
 
     public void resume()
     {
-        final String request = "START SHELL COMMAND " + STAFUtil.wrapData("kill -SIGCONT " + handle.getHandle()) +
-                " WAIT " + timeout + "s RETURNSTDOUT STDERRTOSTDOUT";
-        final STAFResult result = handle.submit2(machine, SERVICE, request);
-        if (result.rc != 0) {
-            System.out.println("ERROR: STAF " + machine + " " + SERVICE + " " + request +
-                    " RC: " + result.rc + ", Result: " + result.result);
-            System.exit(1);
-        }
         try {
-            completionLatch.countDown();
+            final STAFHandle resumeHandle = new STAFHandle("resume-" + name);
+            final String request = "START SHELL COMMAND " + STAFUtil.wrapData("kill -SIGCONT " + handle.getHandle()) +
+                    " WAIT " + timeout + "s RETURNSTDOUT STDERRTOSTDOUT";
+            final STAFResult result = resumeHandle.submit2(machine, SERVICE, request);
+            if (result.rc != 0) {
+                System.out.println("ERROR: STAF " + machine + " " + SERVICE + " " + request +
+                        " RC: " + result.rc + ", Result: " + result.result);
+                System.exit(1);
+            }
+            resumeHandle.unRegister();
         } catch (Exception e) {
             e.printStackTrace();
         }
