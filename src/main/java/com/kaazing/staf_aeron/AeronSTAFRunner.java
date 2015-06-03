@@ -33,7 +33,7 @@ public class AeronSTAFRunner
         threadPool = Executors.newFixedThreadPool(5);
         threadPool.execute(new Test0000(EMPTY, EMPTY).validate());
         threadPool.execute(new Test0005(EMPTY, EMPTY).validate());
-
+        threadPool.execute(new Test0160(EMPTY, EMPTY).validate());
         try
         {
             threadPool.shutdown();

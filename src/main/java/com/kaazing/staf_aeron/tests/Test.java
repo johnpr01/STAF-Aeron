@@ -44,6 +44,10 @@ public abstract class Test extends Thread
         processes.get(name).kill();
     }
 
+    protected void pauseProcess(final String name) { processes.get(name).pause(); }
+
+    protected void resumeProcess(final String name) { processes.get(name).resume(); }
+
     public abstract Test validate();
 
     protected synchronized int getPort(String machine)

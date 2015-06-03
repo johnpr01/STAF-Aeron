@@ -114,6 +114,41 @@ public class AeronSTAFProcess
         }
     }
 
+    public void pause()
+    {
+        final String request = "START SHELL COMMAND " + STAFUtil.wrapData("kill -SIGSTOP " + handle.getHandle()) +
+                " WAIT " + timeout + "s RETURNSTDOUT STDERRTOSTDOUT";
+
+        final STAFResult result = handle.submit2(machine, SERVICE, request);
+        if (result.rc != 0) {
+            System.out.println("ERROR: STAF " + machine + " " + SERVICE + " " + request +
+                    " RC: " + result.rc + ", Result: " + result.result);
+            System.exit(1);
+        }
+        try {
+            completionLatch.countDown();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void resume()
+    {
+        final String request = "START SHELL COMMAND " + STAFUtil.wrapData("kill -SIGCONT " + handle.getHandle()) +
+                " WAIT " + timeout + "s RETURNSTDOUT STDERRTOSTDOUT";
+        final STAFResult result = handle.submit2(machine, SERVICE, request);
+        if (result.rc != 0) {
+            System.out.println("ERROR: STAF " + machine + " " + SERVICE + " " + request +
+                    " RC: " + result.rc + ", Result: " + result.result);
+            System.exit(1);
+        }
+        try {
+            completionLatch.countDown();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public Map getResults()
     {
         return (Map)result.resultObj;
