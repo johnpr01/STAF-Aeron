@@ -46,15 +46,16 @@ public class Test0005 extends Test
         }
 
         startProcess("local",
-                "/usr/local/java/bin/java -Daeron.dir=/tmp/" + this.getClass().getSimpleName() + "/sub " + properties[1]  +
+                "/usr/local/java/bin/java -Daeron.dir=/tmp/" + this.getClass().getSimpleName() + "/sub " + properties[0]  +
                         " -cp " + CLASSPATH +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " --driver=embedded -m=1000000 -c=udp://localhost:44444 " + options[1],
+                        " --driver=embedded -m=1000000 -c=udp://localhost:44444 " + options[0],
                 "Test0005-sub", 10);
 
         try
         {
             latch.await();
+            validate();
         }
         catch (Exception e)
         {
@@ -64,8 +65,8 @@ public class Test0005 extends Test
 
     public Test validate()
     {
-        final Map result1 = processes.get("Test0005-sub").getResults();
-        final Map result2 = processes.get("Test0005-pub").getResults();
+        //final Map result1 = processes.get("Test0005-sub").getResults();
+        //final Map result2 = processes.get("Test0005-pub").getResults();
         return this;
     }
 }

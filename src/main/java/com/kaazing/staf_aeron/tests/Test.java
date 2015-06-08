@@ -30,9 +30,9 @@ import java.util.concurrent.CountDownLatch;
 public abstract class Test extends Thread
 {
     protected HashMap<String, AeronSTAFProcess> processes = null;
-    protected static final String CLASSPATH = "TODO";
+    protected static final String CLASSPATH = "/home/philip/work/Aeron/aeron-tools/build/libs/tools.jar";
     protected CountDownLatch latch = null;
-    private static int currentPort = 1000;
+    private static int currentPort = 1400;
 
     protected void startProcess(final String machine, final String command, final String name, final int timeout)
     {

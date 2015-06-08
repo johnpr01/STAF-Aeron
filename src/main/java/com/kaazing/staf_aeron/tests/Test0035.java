@@ -35,14 +35,14 @@ public class Test0035 extends Test
                 "/usr/local/java/bin/java " + aeronDir + "/sub " + properties[0] +
                         " -cp " + CLASSPATH +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " --driver=embedded -r=5Mbps -c=udp://localhost:" + port + " " + options[0],
-                "Test0035-sub", 10);
+                        " --driver=embedded -m=1000000 -r=5Mbps -c=udp://localhost:" + port + " " + options[0],
+                "Test0035-sub", 60);
         startProcess("local",
-                "/usr/local/java/bin/java " + aeronDir + "/pub" + properties[1] +
+                "/usr/local/java/bin/java " + aeronDir + "/pub" + properties[0] +
                         " -cp " + CLASSPATH +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " --driver=embedded -r=10Mbps -c=udp://localhost:" + port + " " + options[1],
-                "Test0035-pub", 10);
+                        " --driver=embedded -r=10Mbps -m=1000000 -c=udp://localhost:" + port + " " + options[0],
+                "Test0035-pub", 60);
 
         try
         {

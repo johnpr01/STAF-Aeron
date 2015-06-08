@@ -57,38 +57,51 @@ public class AeronSTAFProcess
     public AeronSTAFProcess run()
     {
         try {
-            final String request = "START SHELL COMMAND " + STAFUtil.wrapData(command) +
+            final String request = "START SHELL COMMAND " + command +
                     " WAIT " + timeout + "s RETURNSTDOUT STDERRTOSTDOUT";
             Runnable task = () -> {
                     result = handle.submit2(machine, SERVICE, request);
                     if (result.rc != 0) {
                         try {
+                            final Map resultMap = (Map) result.resultObj;
+                            System.out.println("ERROR " + name + " " + result.result);
+                            System.out.println("Test Failure");
                             PrintWriter output = new PrintWriter(name + ".log");
-                            output.println("ERROR: STAF " + machine + " " + SERVICE + " " + request +
-                                    " RC: " + result.rc + ", Result: " + result.result);
+                            output.println("ERROR: Process RC is not 0.\n");
+                            final List returnedFileList = (List) resultMap.get("fileList");
+                            final Map stdoutMap = (Map) returnedFileList.get(0);
+                            System.out.println((String) stdoutMap.get("data"));
                             output.close();
+                            System.exit(1);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                         System.exit(1);
                     }
+
+                    try {
+                        final Map resultMap = (Map) result.resultObj;
+                        final String processRC = (String) resultMap.get("rc");
+
+                        if (!processRC.equals("0")) {
+                            System.out.println("Test Failure");
+                            PrintWriter output = new PrintWriter(name + ".log");
+                            output.println("ERROR: Process RC is not 0.\n");
+                            final List returnedFileList = (List) resultMap.get("fileList");
+                            final Map stdoutMap = (Map) returnedFileList.get(0);
+                            System.out.println((String) stdoutMap.get("data"));
+                            output.close();
+                            System.exit(1);
+                        } else {
+                            System.out.println("TEST: " + name + " passed!");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
             };
+
             final Thread work = new Thread(task);
             work.start();
-            Thread.sleep(timeout * 2000);
-
-            final Map resultMap = (Map)result.resultObj;
-            final String processRC = (String)resultMap.get("rc");
-
-            if (!processRC.equals("0")) {
-                PrintWriter output = new PrintWriter(name + ".log");
-                output.println("ERROR: Process RC is not 0.\n");
-                final List returnedFileList = (List)resultMap.get("fileList");
-                final Map stdoutMap = (Map)returnedFileList.get(0);
-                output.println((String)stdoutMap.get("data"));
-                output.close();
-                System.exit(1);
-            }
 
             completionLatch.countDown();
         } catch (Exception e) {
