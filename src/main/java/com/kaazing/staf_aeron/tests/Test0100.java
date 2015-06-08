@@ -22,29 +22,43 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-public class Test0000 extends Test
+// While a Publisher is actively sending to a subscriber, a new publisher is started and sends to the same subscriber
+// New (late) publisher will use the same stream stream id as publisher 1.
+public class Test0100 extends Test
 {
-    public Test0000(String[] properties, String[] options)
+    public Test0100(String[] properties, String[] options)
     {
         processes = new HashMap<String, AeronSTAFProcess>();
-        latch = new CountDownLatch(2);
+        latch = new CountDownLatch(3);
         final String aeronDir = "-Daeron.dir=/tmp/" + this.getClass().getSimpleName();
         int port = getPort("local");
 
-        System.out.println("GOT PORT: " + port);
         startProcess("local",
                 "/usr/local/java/bin/java " + aeronDir + "/sub " + properties[0] +
                         " -cp " + CLASSPATH +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " --driver=embedded -m=100 -c=udp://localhost:" + port + " " + options[0],
-                "Test0000-sub", 60);
-        System.out.println("Starting process 2");
+                        " -c=udp://localhost:" + port + " " + options[0],
+                "Test0100-sub", 10);
         startProcess("local",
-                "/usr/local/java/bin/java " + aeronDir + "/pub" + properties[0] +
+                "/usr/local/java/bin/java " + aeronDir + "/pub" + properties[1] +
                         " -cp " + CLASSPATH +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " --driver=embedded -m=100 -c=udp://localhost:" + port + " " + options[0],
-                "Test0000-pub", 60);
+                        " -c=udp://localhost:" + port + " " + options[1],
+                "Test00100-pub1", 10);
+        //Allow publisher 1 to send to the subscriber a few seconds before starting publisher 2 using the same stream id
+        try
+        {
+            Thread.sleep(10000);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        startProcess("local",
+                "/usr/local/java/bin/java " + aeronDir + "/pub" + properties[2] +
+                        " -cp " + CLASSPATH +
+                        " uk.co.real_logic.aeron.tools.PublisherTool" +
+                        " -c=udp://localhost:" + port + " " + options[2],
+                "Test0100-pub2", 10);
 
         try
         {
@@ -54,14 +68,14 @@ public class Test0000 extends Test
         {
             e.printStackTrace();
         }
-        validate();
     }
+// Verification: The subscriber will receive messages from both publishers
 
     public Test validate()
     {
-        //System.out.println("Done");
-        //final Map result1 = processes.get("Test0000-sub").getResults();
-        //final Map result2 = processes.get("Test0000-pub").getResults();
+        final Map result1 = processes.get("Test0100-sub").getResults();
+        final Map result2 = processes.get("Test0100-pub1").getResults();
+        final Map result3 = processes.get("Test0100-pub2").getResults();
         return this;
     }
 }

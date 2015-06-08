@@ -22,30 +22,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-public class Test0000 extends Test
+// Stress test: A subscriber fails while multiple publishers (50) are sending to multiple subscribers (50)
+// For this put startProcess in a loop?
+public class Test0155 extends Test
 {
-    public Test0000(String[] properties, String[] options)
+    public Test0155(String[] properties, String[] options)
     {
         processes = new HashMap<String, AeronSTAFProcess>();
         latch = new CountDownLatch(2);
         final String aeronDir = "-Daeron.dir=/tmp/" + this.getClass().getSimpleName();
         int port = getPort("local");
 
-        System.out.println("GOT PORT: " + port);
         startProcess("local",
                 "/usr/local/java/bin/java " + aeronDir + "/sub " + properties[0] +
                         " -cp " + CLASSPATH +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " --driver=embedded -m=100 -c=udp://localhost:" + port + " " + options[0],
-                "Test0000-sub", 60);
-        System.out.println("Starting process 2");
+                        " --driver=embedded -c=udp://localhost:" + port + " " + options[0],
+                "Test0155-sub", 10);
         startProcess("local",
-                "/usr/local/java/bin/java " + aeronDir + "/pub" + properties[0] +
+                "/usr/local/java/bin/java " + aeronDir + "/pub" + properties[1] +
                         " -cp " + CLASSPATH +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " --driver=embedded -m=100 -c=udp://localhost:" + port + " " + options[0],
-                "Test0000-pub", 60);
-
+                        " --driver=embedded -c=udp://localhost:" + port + " " + options[1],
+                "Test0155-pub", 10);
+//Allow the publishers to send to the subscribers for a few seconds, kill or suspend the one of the subscribers
+//Restart or resume the subscriber after a few seconds
         try
         {
             latch.await();
@@ -54,14 +55,14 @@ public class Test0000 extends Test
         {
             e.printStackTrace();
         }
-        validate();
     }
+// Verification: Communication between other publishers and subscribers will not be affected. After subscriber restarts
+// or resumes it should reconnect to the driver and receive messsages successfully
 
     public Test validate()
     {
-        //System.out.println("Done");
-        //final Map result1 = processes.get("Test0000-sub").getResults();
-        //final Map result2 = processes.get("Test0000-pub").getResults();
-        return this;
+        final Map result1 = processes.get("Test0155-sub").getResults();
+        final Map result2 = processes.get("Test0155-pub").getResults();
+                return this;
     }
 }

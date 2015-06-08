@@ -21,30 +21,28 @@ import com.kaazing.staf_aeron.AeronSTAFProcess;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-
-public class Test0000 extends Test
+// For this test, set the loss rate to .02 on the mediadriver and disabled NAKS
+public class Test0025 extends Test
 {
-    public Test0000(String[] properties, String[] options)
+    public Test0025(String[] properties, String[] options)
     {
         processes = new HashMap<String, AeronSTAFProcess>();
         latch = new CountDownLatch(2);
         final String aeronDir = "-Daeron.dir=/tmp/" + this.getClass().getSimpleName();
         int port = getPort("local");
 
-        System.out.println("GOT PORT: " + port);
         startProcess("local",
                 "/usr/local/java/bin/java " + aeronDir + "/sub " + properties[0] +
                         " -cp " + CLASSPATH +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " --driver=embedded -m=100 -c=udp://localhost:" + port + " " + options[0],
-                "Test0000-sub", 60);
-        System.out.println("Starting process 2");
+                        " --driver=embedded -c=udp://localhost:" + port + " " + options[0],
+                "Test0025-sub", 10);
         startProcess("local",
-                "/usr/local/java/bin/java " + aeronDir + "/pub" + properties[0] +
+                "/usr/local/java/bin/java " + aeronDir + "/pub" + properties[1] +
                         " -cp " + CLASSPATH +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " --driver=embedded -m=100 -c=udp://localhost:" + port + " " + options[0],
-                "Test0000-pub", 60);
+                        " --driver=embedded -c=udp://localhost:" + port + " " + options[1],
+                "Test0025-pub", 10);
 
         try
         {
@@ -54,14 +52,15 @@ public class Test0000 extends Test
         {
             e.printStackTrace();
         }
-        validate();
     }
+// Verification: The subscriber will only a few messages (or it may not receive any messages at all). Flow control
+// does not allow the publisher to overrun the subscriber.  With NAKS disabled, it will just block the publisher from
+// going any further.  The subscriber will consider the publisher to still be alive
 
     public Test validate()
     {
-        //System.out.println("Done");
-        //final Map result1 = processes.get("Test0000-sub").getResults();
-        //final Map result2 = processes.get("Test0000-pub").getResults();
-        return this;
+        final Map result1 = processes.get("Test0025-sub").getResults();
+        final Map result2 = processes.get("Test0025-pub").getResults();
+                return this;
     }
 }

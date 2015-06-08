@@ -22,29 +22,39 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-public class Test0000 extends Test
+// for this scenario, a standalone media driver is running on the same machine.
+public class Test0055 extends Test
 {
-    public Test0000(String[] properties, String[] options)
+    public Test0055(String[] properties, String[] options)
     {
         processes = new HashMap<String, AeronSTAFProcess>();
         latch = new CountDownLatch(2);
         final String aeronDir = "-Daeron.dir=/tmp/" + this.getClass().getSimpleName();
         int port = getPort("local");
 
-        System.out.println("GOT PORT: " + port);
         startProcess("local",
                 "/usr/local/java/bin/java " + aeronDir + "/sub " + properties[0] +
                         " -cp " + CLASSPATH +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " --driver=embedded -m=100 -c=udp://localhost:" + port + " " + options[0],
-                "Test0000-sub", 60);
-        System.out.println("Starting process 2");
+                        " -c=udp://localhost:" + port + " " + options[0],
+                "Test0055-sub", 10);
         startProcess("local",
-                "/usr/local/java/bin/java " + aeronDir + "/pub" + properties[0] +
+                "/usr/local/java/bin/java " + aeronDir + "/pub" + properties[1] +
                         " -cp " + CLASSPATH +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " --driver=embedded -m=100 -c=udp://localhost:" + port + " " + options[0],
-                "Test0000-pub", 60);
+                        " -c=udp://localhost:" + port + " " + options[1],
+                "Test0055-pub", 10);
+        // allow the publisher to send for a few seconds before suspending the media driver
+        try
+        {
+            Thread.sleep(10000);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        // suspend the mediadriver.
+        // resume the mediadriver before the publisher's media driver timer expires
 
         try
         {
@@ -54,14 +64,13 @@ public class Test0000 extends Test
         {
             e.printStackTrace();
         }
-        validate();
     }
-
+// the expected result for the suspend case: while the media driver is suspended, the publisher will be able to send
+// until it is flow controlled. Once the media driver resumes, the subscriber will receive a burst of data
     public Test validate()
     {
-        //System.out.println("Done");
-        //final Map result1 = processes.get("Test0000-sub").getResults();
-        //final Map result2 = processes.get("Test0000-pub").getResults();
+        final Map result1 = processes.get("Test0055-sub").getResults();
+        final Map result2 = processes.get("Test0055-pub").getResults();
         return this;
     }
 }

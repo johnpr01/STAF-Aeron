@@ -21,30 +21,40 @@ import com.kaazing.staf_aeron.AeronSTAFProcess;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-
-public class Test0000 extends Test
+// A standalone media driver and a subscriber is running on machine A.
+// A standalone media driver and publisher is running on machine B.
+public class Test0065 extends Test
 {
-    public Test0000(String[] properties, String[] options)
+    public Test0065(String[] properties, String[] options)
     {
         processes = new HashMap<String, AeronSTAFProcess>();
         latch = new CountDownLatch(2);
         final String aeronDir = "-Daeron.dir=/tmp/" + this.getClass().getSimpleName();
         int port = getPort("local");
 
-        System.out.println("GOT PORT: " + port);
         startProcess("local",
                 "/usr/local/java/bin/java " + aeronDir + "/sub " + properties[0] +
                         " -cp " + CLASSPATH +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " --driver=embedded -m=100 -c=udp://localhost:" + port + " " + options[0],
-                "Test0000-sub", 60);
-        System.out.println("Starting process 2");
+                        " -c=udp://localhost:" + port + " " + options[0],
+                "Test0065-sub", 10);
         startProcess("local",
-                "/usr/local/java/bin/java " + aeronDir + "/pub" + properties[0] +
+                "/usr/local/java/bin/java " + aeronDir + "/pub" + properties[1] +
                         " -cp " + CLASSPATH +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " --driver=embedded -m=100 -c=udp://localhost:" + port + " " + options[0],
-                "Test0000-pub", 60);
+                        " -c=udp://localhost:" + port + " " + options[1],
+                "Test0065-pub", 10);
+        // allow the publisher to send for a few seconds before Killing the media driver on machine B
+        try
+        {
+            Thread.sleep(10000);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        // Kill the media driver on machine B
+        // Restart the media driver on machine B before the client media driver timer expires
 
         try
         {
@@ -54,14 +64,13 @@ public class Test0000 extends Test
         {
             e.printStackTrace();
         }
-        validate();
     }
-
+// Expected results: The clients should reconnect to the driver and communication should resume
+// Repeat the test suspending the media driver
     public Test validate()
     {
-        //System.out.println("Done");
-        //final Map result1 = processes.get("Test0000-sub").getResults();
-        //final Map result2 = processes.get("Test0000-pub").getResults();
+        final Map result1 = processes.get("Test0065-sub").getResults();
+        final Map result2 = processes.get("Test0065-pub").getResults();
         return this;
     }
 }
