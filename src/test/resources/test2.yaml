@@ -1,0 +1,9 @@
+testCases:
+- name: test0000
+  hosts: [buckwasher, mtserver]
+  options: [-m 1000, -v yes]
+  properties: [-Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536]
+- name: test0005
+  hosts: [buckwasher, mtserver]
+  options: [-m 1000, -v yes]
+  properties: [-Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536]
