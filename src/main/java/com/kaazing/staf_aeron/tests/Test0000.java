@@ -33,17 +33,17 @@ public class Test0000 extends Test
 
         System.out.println("GOT PORT: " + port);
         startProcess("local",
-                "/usr/local/java/bin/java " + aeronDir + "/sub " + properties[0] +
+                "/usr/local/java/bin/java " + aeronDir + "/sub" + properties[0] +
                         " -cp " + CLASSPATH +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " --driver=embedded -m=100 -c=udp://localhost:" + port + " " + options[0],
+                        " --driver=embedded -m=1000000 -c=udp://localhost:" + port + " " + options[0],
                 "Test0000-sub", 60);
-        System.out.println("Starting process 2");
+
         startProcess("local",
                 "/usr/local/java/bin/java " + aeronDir + "/pub" + properties[0] +
                         " -cp " + CLASSPATH +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " --driver=embedded -m=100 -c=udp://localhost:" + port + " " + options[0],
+                        " --driver=embedded -m=1000000 -c=udp://localhost:" + port + " " + options[0],
                 "Test0000-pub", 60);
 
         try
