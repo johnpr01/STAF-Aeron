@@ -1,16 +1,16 @@
 testCases:
 - name: Test0000
-  hosts: [local, local]
+  hosts: [buckwasher, buckwasher]
   options: [-m 1000, --verify yes]
   properties: [-Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536]
   isEmbedded: true
 - name: Test0005
-  hosts: [local, local]
+  hosts: [buckwasher, buckwasher]
   options: [-m 1000, --verify yes]
   properties: [-Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536]
   isEmbedded: true
 - name: Test0125
-  hosts: [local, local, local, local, local, local, local, local, local, local]
+  hosts: [buckwasher, buckwasher, buckwasher, buckwasher, buckwasher, buckwasher, buckwasher, buckwasher, buckwasher, buckwasher]
   options: [--verify yes, --verify yes, --verify yes, --verify yes, --verify yes, --verify yes, --verify yes, --verify yes, --verify yes, --verify yes]
   properties: [-Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536]
   isEmbedded: true

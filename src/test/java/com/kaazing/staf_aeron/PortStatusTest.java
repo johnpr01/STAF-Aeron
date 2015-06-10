@@ -19,7 +19,7 @@ public class PortStatusTest {
         try {
             String machine = "local";
             int currentPort = 20000;
-            String command = "java -cp staf.jar com.kaazing.star_aeron.util.PortStatus " + currentPort;
+            String command = "java -cp staf.jar com.kaazing.staf_aeron.util.PortStatus " + currentPort;
             String timeout = "5s";
             final String request = "START SHELL COMMAND " + STAFUtil.wrapData(command) +
                     " WAIT " + timeout + " RETURNSTDOUT STDERRTOSTDOUT";
@@ -52,7 +52,7 @@ public class PortStatusTest {
         try {
             String machine = "local";
             int currentPort = -1;
-            String command = "java -cp staf.jar com.kaazing.star_aeron.util.PortStatus " + currentPort;
+            String command = "java -cp staf.jar com.kaazing.staf_aeron.util.PortStatus " + currentPort;
             String timeout = "5s";
             final String request = "START SHELL COMMAND " + STAFUtil.wrapData(command) +
                     " WAIT " + timeout + " RETURNSTDOUT STDERRTOSTDOUT";
