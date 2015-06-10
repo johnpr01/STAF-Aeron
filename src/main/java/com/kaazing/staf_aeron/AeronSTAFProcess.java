@@ -78,11 +78,9 @@ public class AeronSTAFProcess
                             //final Map stdoutMap = (Map) returnedFileList.get(0);
                             //System.out.println((String) stdoutMap.get("data"));
                             output.close();
-                            System.exit(1);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        System.exit(1);
                     }
 
                     try {
@@ -97,7 +95,6 @@ public class AeronSTAFProcess
                             final Map stdoutMap = (Map) returnedFileList.get(0);
                             System.out.println((String) stdoutMap.get("data"));
                             output.close();
-                            System.exit(1);
                         } else {
                             System.out.println("TEST: " + name + " passed!");
                         }

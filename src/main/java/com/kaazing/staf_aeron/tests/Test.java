@@ -56,7 +56,7 @@ public abstract class Test extends Thread
             boolean found = false;
             try {
                 do {
-                    String command = "java -cp staf.jar com.kaazing.star_aeron.util.PortStatus " + currentPort;
+                    String command = "java -cp staf.jar com.kaazing.staf_aeron.util.PortStatus " + currentPort;
                     String timeout = "5s";
                     final String request = "START SHELL COMMAND " + STAFUtil.wrapData(command) +
                             " WAIT " + timeout + " RETURNSTDOUT STDERRTOSTDOUT";

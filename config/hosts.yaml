@@ -3,6 +3,7 @@ hosts:
   ipAddress: "192.168.14.34"
   OS: "linux"
   classpath: "/home/mtiddens/tools.jar"
+  javaPath: "/opt/jdk1.8.0_50/bin"
 - hostName: mtserver
   ipAddress: "192.168.14.12"
   OS: "linux"
