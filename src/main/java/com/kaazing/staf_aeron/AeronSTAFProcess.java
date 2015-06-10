@@ -48,7 +48,6 @@ public class AeronSTAFProcess
     {
         this.machine = machine;
         this.command = command;
-        //System.out.println("Command: " + command);
         this.completionLatch = completionLatch;
         this.timeout = timeout;
         this.name = name;
@@ -69,22 +68,19 @@ public class AeronSTAFProcess
                 result = handle.submit2(machine, SERVICE, request);
                     if (result.rc != 0) {
                         try {
-                            //final Map resultMap = (Map) result.resultObj;
-                            System.out.println("ERROR " + name + " " + result.result);
-                            System.out.println("Test Failure");
+                            System.out.println("ERROR " + name + " " + result.result + " Timed Out");
                             PrintWriter output = new PrintWriter(name + ".log");
-                            output.println("ERROR: Process RC is not 0.\n");
-                            //final List returnedFileList = (List) resultMap.get("fileList");
-                            //final Map stdoutMap = (Map) returnedFileList.get(0);
-                            //System.out.println((String) stdoutMap.get("data"));
+                            output.println("ERROR: Process " + name + " Timed Out.\n");
                             output.close();
+                            kill();
+                            return;
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
 
                     try {
-                        final Map resultMap = (Map) result.resultObj;
+                        Map resultMap = (Map) result.resultObj;
                         final String processRC = (String) resultMap.get("rc");
 
                         if (!processRC.equals("0")) {
