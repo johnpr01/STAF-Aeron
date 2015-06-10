@@ -40,6 +40,7 @@ public class Test0000 extends Test
 
 
         System.out.println("GOT PORT: " + port);
+
         startProcess(host1.getHostName(),
                 host1.getJavaPath() + host1.getPathSeperator() + "java " + aeronDir + host1.getPathSeperator() +
                         "sub " + host1.getProperties() +
