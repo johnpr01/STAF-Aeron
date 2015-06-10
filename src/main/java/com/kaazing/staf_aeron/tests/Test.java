@@ -30,7 +30,7 @@ import java.util.concurrent.CountDownLatch;
 public abstract class Test extends Thread
 {
     protected HashMap<String, AeronSTAFProcess> processes = null;
-    protected static final String CLASSPATH = "/home/philip/work/Aeron/aeron-tools/build/libs/tools.jar";
+    //protected static final String host1.getClasspath() = "/home/philip/work/Aeron/aeron-tools/build/libs/tools.jar";
     protected CountDownLatch latch = null;
     private static int currentPort = 1400;
 

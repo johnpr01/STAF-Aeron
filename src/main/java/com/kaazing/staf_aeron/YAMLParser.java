@@ -16,6 +16,7 @@
 
 package com.kaazing.staf_aeron;
 
+import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -30,6 +31,11 @@ public class YAMLParser {
     static STAFHosts parseHosts(String filename)
     {
         Constructor constructor = new Constructor(STAFHosts.class);
+        TypeDescription hostsDesc = new TypeDescription(STAFHosts.class);
+        hostsDesc.putListPropertyType("hosts", STAFHost.class);
+        constructor.addTypeDescription(hostsDesc);
+
+
         Yaml file = new Yaml(constructor);
         InputStream input = null;
 
@@ -41,7 +47,42 @@ public class YAMLParser {
         {
 
         }
+
         STAFHosts hosts = (STAFHosts) file.load(input);
+        hosts.dumpHosts();
         return hosts;
+
+    }
+
+    static YAMLTestCases parseTests(String filename)
+    {
+        Constructor constructor = new Constructor(YAMLTestCases.class);
+        TypeDescription testsDesc = new TypeDescription(YAMLTestCases.class);
+        testsDesc.putListPropertyType("testCases", YAMLTestCase.class);
+        constructor.addTypeDescription(testsDesc);
+
+        Yaml file = new Yaml(constructor);
+        InputStream input = null;
+
+        try
+        {
+            input = new FileInputStream(new File(filename));
+        }
+        catch (Exception e)
+        {
+
+        }
+
+        YAMLTestCases cases = (YAMLTestCases) file.load(input);
+        cases.dump();
+        return cases;
+    }
+
+    public static YAMLTestCases parseConfig(){
+        STAFHosts availableHosts = parseHosts("config/hosts.yaml");
+        YAMLTestCases tests = parseTests("config/tests.yaml");
+        tests.validateAndPopulateHosts(availableHosts);
+        return tests;
+
     }
 }

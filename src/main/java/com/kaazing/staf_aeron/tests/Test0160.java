@@ -17,25 +17,30 @@
 package com.kaazing.staf_aeron.tests;
 
 import com.kaazing.staf_aeron.AeronSTAFProcess;
+import com.kaazing.staf_aeron.STAFHost;
+import com.kaazing.staf_aeron.YAMLTestCase;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 public class Test0160 extends Test
 {
-    public Test0160(String[] properties, String[] options)
+    public Test0160(YAMLTestCase testCase)
     {
+        STAFHost host1 = testCase.getStafHosts().get(0);
+
         processes = new HashMap<String, AeronSTAFProcess>();
         latch = new CountDownLatch(2);
-        final String aeronDir = "-Daeron.dir=/tmp/" + this.getClass().getSimpleName();
-        int port = getPort("local");
+        final String aeronDir = "-Daeron.dir=" + host1.getTmpDir() + host1.getPathSeperator() + testCase.getName();
+        int port = getPort(host1.getHostName());
 
-        startProcess("local",
-                "/usr/local/java/bin/java " + aeronDir + "/sub " + properties[0] +
-                        " -cp " + CLASSPATH +
+        startProcess(host1.getHostName(),
+                host1.getJavaPath() + host1.getPathSeperator() + "java " + aeronDir + host1.getPathSeperator() + "sub" + host1.getProperties() +
+                        " -cp " + host1.getClasspath() +
                         " uk.co.real_logic.aeron.tools.ThwackerTool" +
-                        options[0],
+                        host1.getOptions(),
                 "Test0160-Thwack", 50);
 
         try

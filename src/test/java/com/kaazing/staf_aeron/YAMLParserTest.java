@@ -19,11 +19,7 @@ package com.kaazing.staf_aeron;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-import org.apache.commons.cli.ParseException;
-import org.junit.Before;
 import org.junit.Test;
-
-import java.util.List;
 
 public class YAMLParserTest {
 
@@ -31,6 +27,8 @@ public class YAMLParserTest {
     public void verifyHostList(){
 
         STAFHosts hosts = YAMLParser.parseHosts("src/test/resources/test.yaml");
+        YAMLTestCases cases = YAMLParser.parseTests("src/test/resources/test2.yaml");
+        cases.validateAndPopulateHosts(hosts);
     }
 
 }

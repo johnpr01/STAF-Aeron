@@ -17,23 +17,64 @@
 package com.kaazing.staf_aeron;
 
 import com.kaazing.staf_aeron.tests.*;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class AeronSTAFRunner
+
+public class   AeronSTAFRunner
 {
     private ExecutorService threadPool = null;
-    private static final String[] EMPTY = { "" };
     private int startPort = 1024;
     private int endPort = 3000;
     private int currentPort = startPort;
+    static final String TEST_CLASS_PREFIX = "com.kaazing.staf_aeron.tests.";
 
     public AeronSTAFRunner()
     {
+        STAFHosts availableHosts = YAMLParser.parseHosts("config/hosts.yaml");
+        YAMLTestCases tests = YAMLParser.parseTests("config/tests.yaml");
+        //This step is needed before using the test cases. It correlates hostNames to host objects and populates each
+        // test case
+        tests.validateAndPopulateHosts(availableHosts);
+        if(tests.isStandaloneDriver()){
+            //Method to loop through available hosts, and start drivers on the active hosts
+            startStandAloneDrivers(availableHosts);
+        }
+
+        YAMLTestCases cases = tests;
         threadPool = Executors.newFixedThreadPool(5);
-        threadPool.execute(new Test0000(EMPTY, EMPTY));
-        threadPool.execute(new Test0005(EMPTY, EMPTY));
-        threadPool.execute(new Test0035(EMPTY, EMPTY));
+        Class test = null;
+        // Loop through each test case and start the corresponding class using the test's name as specified via YAML
+        for(YAMLTestCase t : cases.getTestCases()){
+            try {
+                test = Class.forName(TEST_CLASS_PREFIX + t.getName());
+
+                Class[] types = {YAMLTestCase.class};
+                Constructor constructor = test.getConstructor(types);
+
+                Object[] params = {t};
+                // Here is where we would add the test permutations
+                Object newTestInstance = constructor.newInstance(params);
+                threadPool.execute((Test)newTestInstance);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
+        }
+
         try
         {
             threadPool.shutdown();
@@ -46,6 +87,10 @@ public class AeronSTAFRunner
 
     public void enqueueTest()
     {
+
+    }
+
+    public void startStandAloneDrivers(STAFHosts availableHosts){
 
     }
 

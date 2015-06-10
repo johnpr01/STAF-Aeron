@@ -43,6 +43,7 @@ public class AeronSTAFProcess
     {
         this.machine = machine;
         this.command = command;
+        System.out.println("Command: " + command);
         this.completionLatch = completionLatch;
         this.timeout = timeout;
         this.name = name;

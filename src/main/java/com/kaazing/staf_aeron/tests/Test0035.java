@@ -17,31 +17,36 @@
 package com.kaazing.staf_aeron.tests;
 
 import com.kaazing.staf_aeron.AeronSTAFProcess;
+import com.kaazing.staf_aeron.STAFHost;
+import com.kaazing.staf_aeron.YAMLTestCase;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 public class Test0035 extends Test
 {
-    public Test0035(String[] properties, String[] options)
+    public Test0035(YAMLTestCase testCase)
     {
+        STAFHost host1 = testCase.getStafHosts().get(0);
+
         processes = new HashMap<String, AeronSTAFProcess>();
         latch = new CountDownLatch(2);
-        final String aeronDir = "-Daeron.dir=/tmp/" + this.getClass().getSimpleName();
-        int port = getPort("local");
+        final String aeronDir = "-Daeron.dir=" + host1.getTmpDir() + host1.getPathSeperator() + testCase.getName();
+        int port = getPort(host1.getHostName());
 
-        startProcess("local",
-                "/usr/local/java/bin/java " + aeronDir + "/sub " + properties[0] +
-                        " -cp " + CLASSPATH +
+        startProcess(host1.getHostName(),
+                host1.getJavaPath() + host1.getPathSeperator() + "java " + aeronDir + host1.getPathSeperator() + "sub" + host1.getProperties() +
+                        " -cp " + host1.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " --driver=embedded -m=1000000 -r=5Mbps -c=udp://localhost:" + port + " " + options[0],
+                        " --driver=embedded -m=1000000 -r=5Mbps -c=udp://localhost:" + port + " " + host1.getOptions(),
                 "Test0035-sub", 60);
-        startProcess("local",
-                "/usr/local/java/bin/java " + aeronDir + "/pub" + properties[0] +
-                        " -cp " + CLASSPATH +
+        startProcess(host1.getHostName(),
+                host1.getJavaPath() + host1.getPathSeperator() + "java " + aeronDir + "/pub" + host1.getProperties() +
+                        " -cp " + host1.getClasspath() +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " --driver=embedded -r=10Mbps -m=1000000 -c=udp://localhost:" + port + " " + options[0],
+                        " --driver=embedded -r=10Mbps -m=1000000 -c=udp://localhost:" + port + " " + host1.getOptions(),
                 "Test0035-pub", 60);
 
         try

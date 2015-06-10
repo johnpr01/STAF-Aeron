@@ -17,15 +17,20 @@
 package com.kaazing.staf_aeron;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class STAFHosts {
-    ArrayList<STAFHost> hosts = null;
+    private List<STAFHost> hosts = null;
+
+    public STAFHosts() {
+
+    }
 
     public STAFHost getHostByName(String name){
         STAFHost rc = null;
         for (STAFHost s : hosts){
-            if(s.getHostname().contains(name)){
+            if(s.getHostName().contains(name)){
                 rc = s;
                 break;
             }
@@ -35,7 +40,16 @@ public class STAFHosts {
 
     public void dumpHosts(){
         for (STAFHost s : hosts){
-            System.out.println("Hostname: " + s.getHostname() + " ip: " + s.getIPAddress() + " classpath: " + s.getIPAddress() + " os: " + s.getOS());
+            System.out.println("Hostname: " + s.getHostName() + " ip: " + s.getIpAddress() + " classpath: " + s.getClasspath() + " os: " + s.getOS());
         }
     }
+
+    public List<STAFHost> getHosts(){
+        return hosts;
+    }
+
+    public void setHosts(List<STAFHost> hosts){
+        this.hosts = hosts;
+    }
+
 }

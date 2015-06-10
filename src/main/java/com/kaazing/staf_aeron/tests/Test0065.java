@@ -17,32 +17,38 @@
 package com.kaazing.staf_aeron.tests;
 
 import com.kaazing.staf_aeron.AeronSTAFProcess;
+import com.kaazing.staf_aeron.STAFHost;
+import com.kaazing.staf_aeron.YAMLTestCase;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 // A standalone media driver and a subscriber is running on machine A.
 // A standalone media driver and publisher is running on machine B.
 public class Test0065 extends Test
 {
-    public Test0065(String[] properties, String[] options)
+    public Test0065(YAMLTestCase testCase)
     {
+        STAFHost host1 = testCase.getStafHosts().get(0);
+        STAFHost host2 = testCase.getStafHosts().get(1);
+
         processes = new HashMap<String, AeronSTAFProcess>();
         latch = new CountDownLatch(2);
-        final String aeronDir = "-Daeron.dir=/tmp/" + this.getClass().getSimpleName();
-        int port = getPort("local");
+        final String aeronDir = "-Daeron.dir=" + host1.getTmpDir() + host1.getPathSeperator() + testCase.getName();
+        int port = getPort(host1.getHostName());
 
-        startProcess("local",
-                "/usr/local/java/bin/java " + aeronDir + "/sub " + properties[0] +
-                        " -cp " + CLASSPATH +
+        startProcess(host1.getHostName(),
+                host1.getJavaPath() + host1.getPathSeperator() + "java " + aeronDir + host1.getPathSeperator() + "sub" + host1.getProperties() +
+                        " -cp " + host1.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " -c=udp://localhost:" + port + " " + options[0],
+                        " -c=udp://localhost:" + port + " " + host1.getOptions(),
                 "Test0065-sub", 10);
-        startProcess("local",
-                "/usr/local/java/bin/java " + aeronDir + "/pub" + properties[1] +
-                        " -cp " + CLASSPATH +
+        startProcess(host2.getHostName(),
+                host2.getJavaPath() + host2.getPathSeperator() + "java " + aeronDir + "/pub" + host2.getProperties() +
+                        " -cp " + host2.getClasspath() +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " -c=udp://localhost:" + port + " " + options[1],
+                        " -c=udp://localhost:" + port + " " + host2.getOptions(),
                 "Test0065-pub", 10);
         // allow the publisher to send for a few seconds before Killing the media driver on machine B
         try

@@ -12,3 +12,4 @@ hosts:
   OS: "windows"
   classpath: "C:\\mydir\\gitrepos\\Aeron\\aeron-tools\\build\\libs\\tools.jar"
   javaPath: "C:\\mydir\\Java\\jdk1.8.0_40\\bin"
+  tmpDir: "C:\\tmp"

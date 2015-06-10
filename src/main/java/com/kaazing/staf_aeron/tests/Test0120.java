@@ -17,23 +17,31 @@
 package com.kaazing.staf_aeron.tests;
 
 import com.kaazing.staf_aeron.AeronSTAFProcess;
+import com.kaazing.staf_aeron.STAFHost;
+import com.kaazing.staf_aeron.YAMLTestCase;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 public class Test0120 extends Test
 {
-    public Test0120(String[] properties, String[] options)
+    public Test0120(YAMLTestCase testCase)
     {
+        STAFHost host1 = testCase.getStafHosts().get(0);
+        STAFHost host2 = testCase.getStafHosts().get(1);
+        STAFHost host3 = testCase.getStafHosts().get(2);
+        STAFHost host4 = testCase.getStafHosts().get(3);
+
         processes = new HashMap<String, AeronSTAFProcess>();
         latch = new CountDownLatch(4);
 
-        startProcess("local",
-                "/usr/local/java/bin/java -Daeron.dir=/tmp/" + this.getClass().getSimpleName() + "/pub " + properties[0] +
-                        " -cp " + CLASSPATH +
+        startProcess(host1.getHostName(),
+                host1.getJavaPath() + host1.getPathSeperator() + "java -Daeron.dir=" + host1.getTmpDir() + host1.getPathSeperator() + testCase.getName() + host1.getPathSeperator() + "pub" + host1.getProperties() +
+                        " -cp " + host1.getClasspath() +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " --driver=embedded -c=udp://localhost:44444 " + options[0],
+                        " --driver=embedded -c=udp://localhost:44444 " + host1.getOptions(),
                 "Test0120-pub", 10);
 
         try
@@ -45,25 +53,25 @@ public class Test0120 extends Test
             e.printStackTrace();
         }
 
-        startProcess("local",
-                "/usr/local/java/bin/java -Daeron.dir=/tmp/" + this.getClass().getSimpleName() + "/sub " + properties[1]  +
-                        " -cp " + CLASSPATH +
+        startProcess(host2.getHostName(),
+                host2.getJavaPath() + host2.getPathSeperator() + "java -Daeron.dir=" + host2.getTmpDir() + host2.getPathSeperator() + testCase.getName() + host2.getPathSeperator() + "sub" + host2.getProperties()  +
+                        " -cp " + host2.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " --driver=embedded -c=udp://localhost:44444 " + options[1],
+                        " --driver=embedded -c=udp://localhost:44444 " + host2.getOptions(),
                 "Test0120-sub1", 10);
 
-        startProcess("local",
-                "/usr/local/java/bin/java -Daeron.dir=/tmp/" + this.getClass().getSimpleName() + "/sub " + properties[2]  +
-                        " -cp " + CLASSPATH +
+        startProcess(host3.getHostName(),
+                host3.getJavaPath() + host3.getPathSeperator() + "java -Daeron.dir=" + host3.getTmpDir() + host3.getPathSeperator() + testCase.getName() + host3.getPathSeperator() + "sub" + host3.getProperties()  +
+                        " -cp " + host3.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " --driver=embedded -c=udp://localhost:44444 " + options[2],
+                        " --driver=embedded -c=udp://localhost:44444 " + host3.getOptions(),
                 "Test0120-sub2", 10);
 
-        startProcess("local",
-                "/usr/local/java/bin/java -Daeron.dir=/tmp/" + this.getClass().getSimpleName() + "/sub " + properties[3]  +
-                        " -cp " + CLASSPATH +
+        startProcess(host3.getHostName(),
+                host4.getJavaPath() + host4.getPathSeperator() + "java -Daeron.dir=" + host4.getTmpDir() + host4.getPathSeperator() + testCase.getName() + host4.getPathSeperator() + "sub" + host4.getProperties()  +
+                        " -cp " + host4.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " --driver=embedded -c=udp://localhost:44444 " + options[3],
+                        " --driver=embedded -c=udp://localhost:44444 " + host4.getOptions(),
                 "Test0120-sub3", 10);
 
         try

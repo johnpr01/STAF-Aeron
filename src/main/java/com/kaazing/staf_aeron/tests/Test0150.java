@@ -17,8 +17,11 @@
 package com.kaazing.staf_aeron.tests;
 
 import com.kaazing.staf_aeron.AeronSTAFProcess;
+import com.kaazing.staf_aeron.STAFHost;
+import com.kaazing.staf_aeron.YAMLTestCase;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
@@ -26,24 +29,29 @@ import java.util.concurrent.CountDownLatch;
 // For this put startProcess in a loop?
 public class Test0150 extends Test
 {
-    public Test0150(String[] properties, String[] options)
+    public Test0150(YAMLTestCase testCase)
     {
+        STAFHost host1 = testCase.getStafHosts().get(0);
+        STAFHost host2 = testCase.getStafHosts().get(1);
+
         processes = new HashMap<String, AeronSTAFProcess>();
         latch = new CountDownLatch(2);
-        final String aeronDir = "-Daeron.dir=/tmp/" + this.getClass().getSimpleName();
-        int port = getPort("local");
+        final String aeronDir = "-Daeron.dir=" + host1.getTmpDir() + host1.getPathSeperator() + testCase.getName();
+        int port = getPort(host1.getHostName());
+        String channel = "-c=udp://localhost:" + port;
+        String embedded = testCase.getIsEmbedded() ? " --driver=embedded" :  "--driver=external";
 
-        startProcess("local",
-                "/usr/local/java/bin/java " + aeronDir + "/sub " + properties[0] +
-                        " -cp " + CLASSPATH +
+        startProcess(host1.getHostName(),
+                host1.getJavaPath() + host1.getPathSeperator() + "java " + aeronDir + host1.getPathSeperator() + "sub" + host1.getProperties() +
+                        " -cp " + host1.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " --driver=embedded -c=udp://localhost:" + port + " " + options[0],
+                        " " + embedded + " " + channel + " " + host1.getOptions(),
                 "Test0150-sub", 10);
-        startProcess("local",
-                "/usr/local/java/bin/java " + aeronDir + "/pub" + properties[1] +
-                        " -cp " + CLASSPATH +
+        startProcess(host2.getHostName(),
+                host2.getJavaPath() + host2.getPathSeperator() + "java " + aeronDir + host2.getPathSeperator() + "pub" + host2.getProperties() +
+                        " -cp " + host2.getClasspath() +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " --driver=embedded -c=udp://localhost:" + port + " " + options[1],
+                        " " + embedded + " " + channel + " " + host2.getOptions(),
                 "Test0150-pub", 10);
 //Allow the publishers to send to the subscribers for a few seconds, kill or suspend the one of the publishers
 //Restart or resume the publisher after a few seconds

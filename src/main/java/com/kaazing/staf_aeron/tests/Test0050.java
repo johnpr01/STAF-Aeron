@@ -17,46 +17,56 @@
 package com.kaazing.staf_aeron.tests;
 
 import com.kaazing.staf_aeron.AeronSTAFProcess;
+import com.kaazing.staf_aeron.STAFHost;
+import com.kaazing.staf_aeron.YAMLTestCase;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 // all subscribers running on same machine as publisher
 
 public class Test0050 extends Test
 {
-    public Test0050(String[] properties, String[] options)
+    public Test0050(YAMLTestCase testCase)
     {
+        STAFHost host1 = testCase.getStafHosts().get(0);
+        STAFHost host2 = testCase.getStafHosts().get(1);
+        STAFHost host3 = testCase.getStafHosts().get(2);
+        STAFHost host4 = testCase.getStafHosts().get(3);
+
         processes = new HashMap<String, AeronSTAFProcess>();
         latch = new CountDownLatch(4);
-        final String aeronDir = "-Daeron.dir=/tmp/" + this.getClass().getSimpleName();
-        int port = getPort("local");
+        final String aeronDir = "-Daeron.dir=" + host1.getTmpDir() + host1.getPathSeperator() + testCase.getName();
+        int port = getPort(host1.getHostName());
+        String channel = "-c=udp://localhost:" + port;
+        String embedded = testCase.getIsEmbedded() ? " --driver=embedded" :  "--driver=external";
 
-        startProcess("local",
-                "/usr/local/java/bin/java " + aeronDir + "/sub " + properties[0] +
-                        " -cp " + CLASSPATH +
+        startProcess(host1.getHostName(),
+                host1.getJavaPath() + host1.getPathSeperator() + "java " + aeronDir + host1.getPathSeperator() + "sub" + host1.getProperties() +
+                        " -cp " + host1.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " --driver=embedded -c=udp://localhost:" + port + " " + options[0],
+                        " " + embedded + " " + channel + " " + host1.getOptions(),
                 "Test0050-sub1", 10);
-        startProcess("local",
-                "/usr/local/java/bin/java " + aeronDir + "/sub " + properties[1] +
-                        " -cp " + CLASSPATH +
+        startProcess(host2.getHostName(),
+                host2.getJavaPath() + host2.getPathSeperator() + "java " + aeronDir + host2.getPathSeperator() + "sub" + host2.getProperties() +
+                        " -cp " + host2.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " --driver=embedded -c=udp://localhost:" + port + " " + options[1],
+                        " " + embedded + " " + channel + " " + host2.getOptions(),
                 "Test0050-sub2", 10);
         // set rate of consumption of sub3 to be slower than the sending rate of the publisher
-        startProcess("local",
-                "/usr/local/java/bin/java " + aeronDir + "/sub " + properties[2] +
-                        " -cp " + CLASSPATH +
+        startProcess(host3.getHostName(),
+                host3.getJavaPath() + host3.getPathSeperator() + "java " + aeronDir + host3.getPathSeperator() + "sub" + host3.getProperties() +
+                        " -cp " + host3.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " --driver=embedded -r 100kbps -c=udp://localhost:" + port + " " + options[2],
+                        " --driver=embedded -r 100kbps -c=udp://localhost:" + port + " " + host3.getOptions(),
                 "Test0050-sub3", 10);
         // set rate of sending of pub to be faster than the consumption rate of sub3
-        startProcess("local",
-                "/usr/local/java/bin/java " + aeronDir + "/pub" + properties[3] +
-                        " -cp " + CLASSPATH +
+        startProcess(host4.getHostName(),
+                host4.getJavaPath() + host4.getPathSeperator() + "java " + aeronDir + "/pub" + host4.getProperties() +
+                        " -cp " + host4.getClasspath() +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " --driver=embedded -r 400kbps -c=udp://localhost:" + port + " " + options[3],
+                        " --driver=embedded -r 400kbps -c=udp://localhost:" + port + " " + host4.getOptions(),
                 "Test0050-pub", 10);
 
         try
