@@ -58,11 +58,6 @@ public class Test0125 extends Test
         String channel3 = "-c=udp://localhost:" + port3;
         String channel4 = "-c=udp://localhost:" + port4;
         String channel5 = "-c=udp://localhost:" + port5;
-        String channel6 = "-c=udp://localhost:" + port6;
-        String channel7 = "-c=udp://localhost:" + port7;
-        String channel8 = "-c=udp://localhost:" + port8;
-        String channel9 = "-c=udp://localhost:" + port9;
-        String channel10 = "-c=udp://localhost:" + port10;
         String embedded = testCase.getIsEmbedded() ? "--driver=embedded" :  "--driver=external";
 
         startProcess(host1.getHostName(),

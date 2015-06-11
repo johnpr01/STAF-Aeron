@@ -66,7 +66,7 @@ public class AeronSTAFProcess
         try {
             final String request = "START SHELL COMMAND " + command +
                     " WAIT " + timeout + "s RETURNSTDOUT STDERRTOSTDOUT";
-	    System.out.println("REQUEST: " + request);
+
             Runnable task = () -> {
                 PrintWriter output = null;
 
@@ -96,13 +96,13 @@ public class AeronSTAFProcess
                             output.println("Test Failure: Process RC is not 0: (" + processRC + ").\n");
                             final List returnedFileList = (List) resultMap.get("fileList");
                             final Map stdoutMap = (Map) returnedFileList.get(0);
-                            System.out.println((String) stdoutMap.get("data"));
+                            //System.out.println((String) stdoutMap.get("data"));
                             output.println((String) stdoutMap.get("data"));
                         } else {
                             System.out.println("TEST: " + name + " passed!");
                             final List returnedFileList = (List) resultMap.get("fileList");
                             final Map stdoutMap = (Map) returnedFileList.get(0);
-                            System.out.println((String) stdoutMap.get("data"));
+                            //System.out.println((String) stdoutMap.get("data"));
                             output.println((String) stdoutMap.get("data"));
                         }
                     } catch (Exception e) {
@@ -125,21 +125,17 @@ public class AeronSTAFProcess
             STAFResult result2 = handle2.submit2(machine, SERVICE, request2);
             try {
                 final LinkedList resultMap2 = (LinkedList) result2.resultObj;
-		System.out.println("Num Results: " + resultMap2.size());
                 for (Object item : resultMap2) {
                     HashMap map = (HashMap)item;
 
                     if (((String)map.get("command")).trim().equalsIgnoreCase(command.trim())) {
-			//System.out.println("NAME: " + name + "     COMMAND: " + command);
                         pid = Integer.parseInt((String)map.get("pid"));
-			//System.out.println("PID: " + pid);
                     }
 
                 }
-
-		if (pid == 0) {
-			System.out.println("PID IS NOT KNOWN");
-		}
+                if (pid == 0) {
+                    System.out.println("PID IS NOT KNOWN");
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
