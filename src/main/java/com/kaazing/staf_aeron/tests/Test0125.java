@@ -43,70 +43,88 @@ public class Test0125 extends Test
         processes = new HashMap<String, AeronSTAFProcess>();
         latch = new CountDownLatch(10);
         final String aeronDir = "-Daeron.dir=" + host1.getTmpDir() + host1.getPathSeperator() + testCase.getName();
-        int port = getPort(host1.getHostName());
-        String channel = "-c=udp://localhost:" + port;
-        String embedded = testCase.getIsEmbedded() ? " --driver=embedded" :  "--driver=external";
+        int port1 = getPort(host1.getHostName());
+        int port2 = getPort(host1.getHostName());
+        int port3 = getPort(host1.getHostName());
+        int port4 = getPort(host1.getHostName());
+        int port5 = getPort(host1.getHostName());
+        int port6 = getPort(host1.getHostName());
+        int port7 = getPort(host1.getHostName());
+        int port8 = getPort(host1.getHostName());
+        int port9 = getPort(host1.getHostName());
+        int port10 = getPort(host1.getHostName());
+        String channel1 = "-c=udp://localhost:" + port1;
+        String channel2 = "-c=udp://localhost:" + port2;
+        String channel3 = "-c=udp://localhost:" + port3;
+        String channel4 = "-c=udp://localhost:" + port4;
+        String channel5 = "-c=udp://localhost:" + port5;
+        String channel6 = "-c=udp://localhost:" + port6;
+        String channel7 = "-c=udp://localhost:" + port7;
+        String channel8 = "-c=udp://localhost:" + port8;
+        String channel9 = "-c=udp://localhost:" + port9;
+        String channel10 = "-c=udp://localhost:" + port10;
+        String embedded = testCase.getIsEmbedded() ? "--driver=embedded" :  "--driver=external";
 
         startProcess(host1.getHostName(),
                 host1.getJavaPath() + host1.getPathSeperator() + "java " + aeronDir + host1.getPathSeperator() + "sub1 " + host1.getProperties() +
                         " -cp " + host1.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " " + embedded + " " + channel + " " + host1.getOptions(),
-                "Test0125-sub1", 10);
+                        " " + embedded + " " + channel1 + " " + host1.getOptions(),
+                "Test0125-sub1", 120);
         startProcess(host2.getHostName(),
                 host2.getJavaPath() + host2.getPathSeperator() + "java " + aeronDir + host2.getPathSeperator() + "sub2 " + host2.getProperties() +
                         " -cp " + host2.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " " + embedded + " " + channel + " " + host2.getOptions(),
-                "Test0125-sub2", 10);
+                        " " + embedded + " " + channel2 + " " + host2.getOptions(),
+                "Test0125-sub2", 120);
         startProcess(host3.getHostName(),
                 host3.getJavaPath() + host3.getPathSeperator() + "java " + aeronDir + host3.getPathSeperator() + "sub3 " + host3.getProperties() +
                         " -cp " + host3.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " " + embedded + " " + channel + " " + host3.getOptions(),
-                "Test0125-sub3", 10);
+                        " " + embedded + " " + channel3 + " " + host3.getOptions(),
+                "Test0125-sub3", 120);
         startProcess(host4.getHostName(),
                 host4.getJavaPath() + host4.getPathSeperator() + "java " + aeronDir + host4.getPathSeperator() + "sub4 " + host4.getProperties() +
                         " -cp " + host4.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " " + embedded + " " + channel + " " + host4.getOptions(),
-                "Test0125-sub4", 10);
+                        " " + embedded + " " + channel4 + " " + host4.getOptions(),
+                "Test0125-sub4", 120);
         startProcess(host5.getHostName(),
                 host5.getJavaPath() + host5.getPathSeperator() + "java " + aeronDir + host5.getPathSeperator() + "sub5 " + host5.getProperties() +
                         " -cp " + host5.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " " + embedded + " " + channel + " " + host5.getOptions(),
-                "Test0125-sub5", 10);
+                        " " + embedded + " " + channel5 + " " + host5.getOptions(),
+                "Test0125-sub5", 120);
         startProcess(host6.getHostName(),
                 host6.getJavaPath() + host6.getPathSeperator() + "java " + aeronDir + host6.getPathSeperator() + "pub1 " + host6.getProperties() +
                         " -cp " + host6.getClasspath() +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " " + embedded + " " + channel + " " + host6.getOptions(),
-                "Test0125-pub1", 10);
+                        " " + embedded + " " + channel1 + " " + host6.getOptions(),
+                "Test0125-pub1", 120);
         startProcess(host7.getHostName(),
                 host7.getJavaPath() + host7.getPathSeperator() + "java " + aeronDir + host7.getPathSeperator() + "pub2 " + host7.getProperties() +
                         " -cp " + host7.getClasspath() +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " " + embedded + " " + channel + " " + host7.getOptions(),
-                "Test0125-pub2", 10);
+                        " " + embedded + " " + channel2 + " " + host7.getOptions(),
+                "Test0125-pub2", 120);
         startProcess(host8.getHostName(),
                 host8.getJavaPath() + host8.getPathSeperator() + "java " + aeronDir + host8.getPathSeperator() + "pub3 " + host8.getProperties() +
                         " -cp " + host8.getClasspath() +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " " + embedded + " " + channel + " " + host8.getOptions(),
-                "Test0125-pub3", 10);
+                        " " + embedded + " " + channel3 + " " + host8.getOptions(),
+                "Test0125-pub3", 120);
         startProcess(host9.getHostName(),
                 host9.getJavaPath() + host9.getPathSeperator() + "java " + aeronDir + host9.getPathSeperator() + "pub4 " + host9.getProperties() +
                         " -cp " + host9.getClasspath() +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " " + embedded + " " + channel + " " + host9.getOptions(),
-                "Test0125-pub4", 10);
+                        " " + embedded + " " + channel4 + " " + host9.getOptions(),
+                "Test0125-pub4", 120);
         startProcess(host10.getHostName(),
                 host10.getJavaPath() + host10.getPathSeperator() + "java " + aeronDir + host10.getPathSeperator() + "pub5 " + host10.getProperties() +
                         " -cp " + host10.getClasspath() +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " " + embedded + " " + channel + " " + host10.getOptions(),
-                "Test0125-pub5", 10);
+                        " " + embedded + " " + channel5 + " " + host10.getOptions(),
+                "Test0125-pub5", 120);
         try
         {
             latch.await();

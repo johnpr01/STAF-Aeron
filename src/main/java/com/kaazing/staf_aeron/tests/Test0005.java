@@ -34,12 +34,12 @@ public class Test0005 extends Test
 
         int port = getPort(host1.getHostName());
         String channel = "-c=udp://localhost:" + port;
-        String embedded = testCase.getIsEmbedded() ? " --driver=embedded" :  "--driver=external";
+        String embedded = testCase.getIsEmbedded() ? "--driver=embedded" :  "--driver=external";
 
         startProcess(host1.getHostName(),
                 host1.getJavaPath() + host1.getPathSeperator() + "java -Daeron.dir=" + host1.getTmpDir() +
                         host1.getPathSeperator() + testCase.getName() + host1.getPathSeperator() + "pub" +
-                        host1.getProperties() +
+                        " " + host1.getProperties() +
                         " -cp " + host1.getClasspath() +
                         " uk.co.real_logic.aeron.tools.PublisherTool " +
                         channel + " " + embedded + " -m=1000000 " + host1.getOptions(),
@@ -57,7 +57,7 @@ public class Test0005 extends Test
         startProcess(host1.getHostName(),
                 host1.getJavaPath() + host1.getPathSeperator() + "java -Daeron.dir=" + host1.getTmpDir() +
                         host1.getPathSeperator() + testCase.getName() + host1.getPathSeperator() + "sub" +
-                        host1.getProperties()  +
+                        " " + host1.getProperties()  +
                         " -cp " + host1.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool " +
                         channel + " " + embedded + " -m=1000000 " + host1.getOptions(),

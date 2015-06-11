@@ -32,11 +32,13 @@ public abstract class Test extends Thread
     protected HashMap<String, AeronSTAFProcess> processes = null;
     //protected static final String host1.getClasspath() = "/home/philip/work/Aeron/aeron-tools/build/libs/tools.jar";
     protected CountDownLatch latch = null;
-    private static int currentPort = 1400;
+    private static final int PORT_MIN = 30000;
+    private static final int PORT_MAX = 60000;
+    private static int currentPort = PORT_MIN;
 
     protected void startProcess(final String machine, final String command, final String name, final int timeout)
     {
-        processes.put(name, new AeronSTAFProcess(machine, command, name, latch, timeout).run());
+        processes.put(name, new AeronSTAFProcess(machine, command, name, latch, timeout));
     }
 
     protected void killProcess(final String name)
@@ -54,6 +56,9 @@ public abstract class Test extends Thread
     {
         synchronized (this) {
             boolean found = false;
+	    if (currentPort == PORT_MAX) {
+		currentPort = PORT_MIN;
+	    }
             try {
                 do {
                     String command = "java -cp staf.jar com.kaazing.staf_aeron.util.PortStatus " + currentPort;
@@ -71,9 +76,11 @@ public abstract class Test extends Thread
                     tmp.unRegister();
                 } while (!found);
 
+		System.out.println("PORT: " + currentPort);
                 return currentPort++;
 
             } catch (Exception e) {
+		System.out.println("PORT: 0");
                 return 0;
             }
         }

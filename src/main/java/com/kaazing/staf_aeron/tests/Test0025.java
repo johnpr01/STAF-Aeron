@@ -38,7 +38,7 @@ public class Test0025 extends Test
 
         int port = getPort(host1.getHostName());
         String channel = "-c=udp://localhost:" + port;
-        String embedded = testCase.getIsEmbedded() ? " --driver=embedded" :  "--driver=external";
+        String embedded = testCase.getIsEmbedded() ? "--driver=embedded" :  "--driver=external";
 
         startProcess(host1.getHostName(),
                 host1.getJavaPath() + host1.getPathSeperator() + "java " + aeronDir + host1.getPathSeperator() + "sub" + host1.getProperties() +

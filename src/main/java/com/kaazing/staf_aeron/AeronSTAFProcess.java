@@ -55,16 +55,18 @@ public class AeronSTAFProcess
 
         try {
             handle = new STAFHandle(name);
+	    run();
         } catch (STAFException e) {
             e.printStackTrace();
         }
     }
 
-    public AeronSTAFProcess run()
+    public void run()
     {
         try {
             final String request = "START SHELL COMMAND " + command +
                     " WAIT " + timeout + "s RETURNSTDOUT STDERRTOSTDOUT";
+	    System.out.println("REQUEST: " + request);
             Runnable task = () -> {
                 PrintWriter output = null;
 
@@ -114,23 +116,30 @@ public class AeronSTAFProcess
             work.start();
 
             try {
-                Thread.sleep(100);
+                Thread.sleep(200);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            final String request2 = "LIST HANDLES LONG";
+            final String request2 = "LIST RUNNING HANDLES LONG";
             STAFHandle handle2 = new STAFHandle("Test");
             STAFResult result2 = handle2.submit2(machine, SERVICE, request2);
             try {
                 final LinkedList resultMap2 = (LinkedList) result2.resultObj;
+		System.out.println("Num Results: " + resultMap2.size());
                 for (Object item : resultMap2) {
                     HashMap map = (HashMap)item;
 
                     if (((String)map.get("command")).trim().equalsIgnoreCase(command.trim())) {
-                        pid = Integer.parseInt((String)map.get("pid")) + 1;
+			//System.out.println("NAME: " + name + "     COMMAND: " + command);
+                        pid = Integer.parseInt((String)map.get("pid"));
+			//System.out.println("PID: " + pid);
                     }
 
                 }
+
+		if (pid == 0) {
+			System.out.println("PID IS NOT KNOWN");
+		}
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -140,8 +149,6 @@ public class AeronSTAFProcess
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return this;
     }
 
     public void kill()
