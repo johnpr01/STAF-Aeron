@@ -56,9 +56,9 @@ public abstract class Test extends Thread
     {
         synchronized (this) {
             boolean found = false;
-	    if (currentPort == PORT_MAX) {
-		currentPort = PORT_MIN;
-	    }
+            if (currentPort == PORT_MAX) {
+                currentPort = PORT_MIN;
+            }
             try {
                 do {
                     String command = "java -cp staf.jar com.kaazing.staf_aeron.util.PortStatus " + currentPort;
@@ -76,11 +76,9 @@ public abstract class Test extends Thread
                     tmp.unRegister();
                 } while (!found);
 
-		System.out.println("PORT: " + currentPort);
                 return currentPort++;
 
             } catch (Exception e) {
-		System.out.println("PORT: 0");
                 return 0;
             }
         }
