@@ -154,7 +154,25 @@ public class AeronSTAFProcess
             if (result.rc != 0) {
                 System.out.println("ERROR: STAF " + machine + " " + SERVICE + " " + request +
                         " RC: " + result.rc + ", Result: " + result.result);
-                System.exit(1);
+            } else {
+                try {
+                    final Map resultMap = (Map) result.resultObj;
+                    final String processRC = (String) resultMap.get("rc");
+
+                    if (!processRC.equals("0")) {
+                        System.out.println("Kill Test Failure: " + name + " " + result.result);
+                        final List returnedFileList = (List) resultMap.get("fileList");
+                        final Map stdoutMap = (Map) returnedFileList.get(0);
+                        System.out.println((String) stdoutMap.get("data"));
+                    } else {
+                        System.out.println("KILL TEST: " + name + " passed!");
+                        final List returnedFileList = (List) resultMap.get("fileList");
+                        final Map stdoutMap = (Map) returnedFileList.get(0);
+                        System.out.println((String) stdoutMap.get("data"));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             killHandle.unRegister();
         } catch (Exception e) {
@@ -173,7 +191,6 @@ public class AeronSTAFProcess
             if (result.rc != 0) {
                 System.out.println("ERROR: STAF " + machine + " " + SERVICE + " " + request +
                         " RC: " + result.rc + ", Result: " + result.result);
-                System.exit(1);
             }
             //System.out.println(result.result);
             pauseHandle.unRegister();
@@ -192,7 +209,6 @@ public class AeronSTAFProcess
             if (result.rc != 0) {
                 System.out.println("ERROR: STAF " + machine + " " + SERVICE + " " + request +
                         " RC: " + result.rc + ", Result: " + result.result);
-                System.exit(1);
             }
             //System.out.println(result.result);
             resumeHandle.unRegister();
