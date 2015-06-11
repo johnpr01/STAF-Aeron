@@ -75,16 +75,15 @@ public class AeronSTAFProcess
                 }
 
                 result = handle.submit2(machine, SERVICE, request);
-                    if (result.rc != 0) {
-                        try {
-                            System.out.println("Test Failure: " + name + " " + result.result + " Timed out");
-                            output.println("Test Failure: " + name + " " + "Timed out.\n");
-                            kill();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                if (result.rc != 0) {
+                    try {
+                        System.out.println("Test Failure: " + name + " " + result.result + " Timed out");
+                        output.println("Test Failure: " + name + " " + "Timed out.\n");
+                        kill();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-
+                } else {
                     try {
                         final Map resultMap = (Map) result.resultObj;
                         final String processRC = (String) resultMap.get("rc");
@@ -96,17 +95,18 @@ public class AeronSTAFProcess
                             final List returnedFileList = (List) resultMap.get("fileList");
                             final Map stdoutMap = (Map) returnedFileList.get(0);
                             System.out.println((String) stdoutMap.get("data"));
-                            output.println((String)stdoutMap.get("data"));
+                            output.println((String) stdoutMap.get("data"));
                         } else {
                             System.out.println("TEST: " + name + " passed!");
                             final List returnedFileList = (List) resultMap.get("fileList");
                             final Map stdoutMap = (Map) returnedFileList.get(0);
                             System.out.println((String) stdoutMap.get("data"));
-                            output.println((String)stdoutMap.get("data"));
+                            output.println((String) stdoutMap.get("data"));
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                }
                 output.close();
             };
 
