@@ -42,7 +42,7 @@ public class Test0000 extends Test
                         "sub " + host1.getProperties() +
                         " -cp " + host1.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        embedded + " -m=100 " + channel + " " + host1.getOptions(),
+                        embedded + " " + channel + " " + host1.getOptions(),
                 testCase.getName() + "-sub", 60);
 
         startProcess(host1.getHostName(),
@@ -50,7 +50,7 @@ public class Test0000 extends Test
                         "pub" + host1.getProperties() +
                         " -cp " + host1.getClasspath() +
                         " uk.co.real_logic.aeron.tools.PublisherTool" + embedded +
-                        " -m=100 " + channel + " " + host1.getOptions(),
+                        " " + channel + " " + host1.getOptions(),
                 testCase.getName() + "-pub", 60);
 
         try

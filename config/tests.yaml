@@ -1,7 +1,7 @@
 testCases:
 - name: Test0000
   hosts: [buckwasher, buckwasher]
-  options: [-m 1000, --verify yes]
+  options: [-m 1000 --verify yes, "--verify yes -r 1000m@max,10s@0mps"]
   properties: [-Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536]
   isEmbedded: true
 - name: Test0005
