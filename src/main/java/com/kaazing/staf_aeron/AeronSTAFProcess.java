@@ -79,7 +79,7 @@ public class AeronSTAFProcess
                 result = handle.submit2(machine, SERVICE, request);
                 if (result.rc != 0) {
                     try {
-                        System.out.println("Test Failure: " + name + " " + result.result + " Timed out");
+                        System.out.println("Test: " + name + " failed! Timed out");
                         output.println("Test Failure: " + name + " " + "Timed out.\n");
                         kill();
                     } catch (Exception e) {
@@ -91,7 +91,7 @@ public class AeronSTAFProcess
                         final String processRC = (String) resultMap.get("rc");
 
                         if (!processRC.equals("0")) {
-                            System.out.println("Test Failure: " + name + " " + result.result);
+                            System.out.println("TEST: " + name + " failed! " + result.result);
 
                             output.println("Test Failure: Process RC is not 0: (" + processRC + ").\n");
                             final List returnedFileList = (List) resultMap.get("fileList");
@@ -102,7 +102,6 @@ public class AeronSTAFProcess
                             System.out.println("TEST: " + name + " passed!");
                             final List returnedFileList = (List) resultMap.get("fileList");
                             final Map stdoutMap = (Map) returnedFileList.get(0);
-                            //System.out.println((String) stdoutMap.get("data"));
                             output.println((String) stdoutMap.get("data"));
                         }
                     } catch (Exception e) {
@@ -155,23 +154,14 @@ public class AeronSTAFProcess
 
             final STAFResult result = killHandle.submit2(machine, SERVICE, request);
             if (result.rc != 0) {
-                System.out.println("ERROR: STAF " + machine + " " + SERVICE + " " + request +
-                        " RC: " + result.rc + ", Result: " + result.result);
+                System.out.println("Kill Test Failure: " + name + " is still running!");
             } else {
                 try {
                     final Map resultMap = (Map) result.resultObj;
                     final String processRC = (String) resultMap.get("rc");
 
                     if (!processRC.equals("0")) {
-                        System.out.println("Kill Test Failure: " + name + " " + result.result);
-                        final List returnedFileList = (List) resultMap.get("fileList");
-                        final Map stdoutMap = (Map) returnedFileList.get(0);
-                        System.out.println((String) stdoutMap.get("data"));
-                    } else {
-                        System.out.println("KILL TEST: " + name + " passed!");
-                        final List returnedFileList = (List) resultMap.get("fileList");
-                        final Map stdoutMap = (Map) returnedFileList.get(0);
-                        System.out.println((String) stdoutMap.get("data"));
+                        System.out.println("Kill Test Failure: " + name + " is still running!");
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
