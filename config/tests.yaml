@@ -11,7 +11,7 @@ testCases:
   isEmbedded: true
 - name: Test0125
   hosts: [buckwasher, buckwasher, buckwasher, buckwasher, buckwasher, buckwasher, buckwasher, buckwasher, buckwasher, buckwasher]
-  options: [--verify yes -m 1000, --verify yes -m 1000, --verify yes -m 1000, --verify yes -m 1000, --verify yes -m 1000, "--verify yes -r 1000m@max,60s@0mps", "--verify yes -r 1000m@max,60s@0mps", "--verify yes -r 1000m@max,60s@0mps", "--verify yes -r 1000m@max,60s@0mps", "--verify yes -r 1000m@max,60s@0mps"]
+  options: [--verify yes -m 1000, --verify yes -m 1000, --verify yes -m 1000, --verify yes -m 1000, --verify yes -m 1000, "--verify yes -r 1000m@max,30s@0mps", "--verify yes -r 1000m@max,30s@0mps", "--verify yes -r 1000m@max,30s@0mps", "--verify yes -r 1000m@max,30s@0mps", "--verify yes -r 1000m@max,30s@0mps"]
   properties: [-Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536]
   isEmbedded: true
 
