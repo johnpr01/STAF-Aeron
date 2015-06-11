@@ -43,7 +43,7 @@ public class Test0005 extends Test
                         " -cp " + host1.getClasspath() +
                         " uk.co.real_logic.aeron.tools.PublisherTool " +
                         channel + " " + embedded + " -m=1000000 " + host1.getOptions(),
-                testCase.getName() + "-pub", 10);
+                testCase.getName() + "-pub", 60);
 
         try
         {
@@ -61,7 +61,7 @@ public class Test0005 extends Test
                         " -cp " + host1.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool " +
                         channel + " " + embedded + " -m=1000000 " + host1.getOptions(),
-                testCase.getName() + "-sub", 10);
+                testCase.getName() + "-sub", 60);
 
         try
         {

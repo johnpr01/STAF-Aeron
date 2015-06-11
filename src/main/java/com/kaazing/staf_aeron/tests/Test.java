@@ -50,24 +50,32 @@ public abstract class Test extends Thread
 
     public abstract Test validate();
 
-    protected synchronized int getPort(String machine)
+    protected int getPort(String machine)
     {
-        try {
-            String command = "java -cp staf.jar com.kaazing.star_aeron.util.PortStatus " + currentPort;
-            String timeout = "5s";
-            final String request = "START SHELL COMMAND " + STAFUtil.wrapData(command) +
-                    " WAIT " + timeout + " RETURNSTDOUT STDERRTOSTDOUT";
-            STAFHandle tmp = new STAFHandle("port");
-            STAFResult result = tmp.submit2(machine, "Process", request);
-            if (result.rc != 0) {
-                currentPort++;
-                return getPort(machine);
-            } else {
-                return currentPort++;
-            }
-        } catch (Exception e) {
-            return 0;
-        }
+        synchronized (this) {
+            boolean found = false;
+            try {
+                do {
+                    String command = "java -cp staf.jar com.kaazing.staf_aeron.util.PortStatus " + currentPort;
+                    String timeout = "5s";
+                    final String request = "START SHELL COMMAND " + STAFUtil.wrapData(command) +
+                            " WAIT " + timeout + " RETURNSTDOUT STDERRTOSTDOUT";
+                    STAFHandle tmp = new STAFHandle("port");
+                    STAFResult result = tmp.submit2(machine, "Process", request);
+                    if (result.rc != 0) {
+                        found = false;
+                        currentPort++;
+                    } else {
+                        found = true;
+                    }
+                    tmp.unRegister();
+                } while (!found);
 
+                return currentPort++;
+
+            } catch (Exception e) {
+                return 0;
+            }
+        }
     }
 }
