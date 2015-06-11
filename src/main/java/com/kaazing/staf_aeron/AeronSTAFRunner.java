@@ -34,6 +34,7 @@ public class   AeronSTAFRunner
     private int currentPort = startPort;
     static final String TEST_CLASS_PREFIX = "com.kaazing.staf_aeron.tests.";
 
+
     public AeronSTAFRunner()
     {
         STAFHosts availableHosts = YAMLParser.parseHosts("config/hosts.yaml");
@@ -47,7 +48,7 @@ public class   AeronSTAFRunner
         }
 
         YAMLTestCases cases = tests;
-        threadPool = Executors.newFixedThreadPool(5);
+        threadPool = Executors.newFixedThreadPool(1);
         Class test = null;
         // Loop through each test case and start the corresponding class using the test's name as specified via YAML
         for(YAMLTestCase t : cases.getTestCases()){
