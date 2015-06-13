@@ -73,6 +73,10 @@ public class Test0085 extends Test
             e.printStackTrace();
         }
     }
+
+    public void run()
+    {}
+
 // the expected result for the kill subscriber:the publisher will continue to send until flow control kicks in,
 // then it will no longer send messages
     public Test validate()

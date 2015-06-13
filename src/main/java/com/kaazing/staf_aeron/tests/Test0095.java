@@ -75,6 +75,10 @@ public class Test0095 extends Test
             e.printStackTrace();
         }
     }
+
+    public void run()
+    {}
+
 // Verification: The subscriber will receive messages from all three publishers
 
     public Test validate()

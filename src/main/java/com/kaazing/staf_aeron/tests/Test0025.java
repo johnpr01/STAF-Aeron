@@ -29,30 +29,24 @@ public class Test0025 extends Test
 {
     public Test0025(YAMLTestCase testCase)
     {
-        STAFHost host1 = testCase.getStafHosts().get(0);
-        STAFHost host2 = testCase.getStafHosts().get(1);
+        super(testCase);
+    }
 
-        processes = new HashMap<String, AeronSTAFProcess>();
-        latch = new CountDownLatch(2);
-        final String aeronDir = "-Daeron.dir=" + host1.getTmpDir() + host1.getPathSeperator() + testCase.getName();
-
-        int port = getPort(host1.getHostName());
+    public void run()
+    {
+        int port = getPort(hosts[0].getHostName());
         String channel = "-c=udp://localhost:" + port;
-        String embedded = testCase.getIsEmbedded() ? "--driver=embedded" :  "--driver=external";
+        String[] commands = { SUB, PUB };
+        String[] types = { "sub", "pub" };
 
-        startProcess(host1.getHostName(),
-                host1.getJavaPath() + host1.getPathSeperator() + "java " + aeronDir + host1.getPathSeperator() + "sub" + host1.getProperties() +
-                        " -cp " + host1.getClasspath() +
-                        " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " " + embedded + " " + channel + " " + host1.getOptions(),
-                "Test0025-sub", 10);
-        startProcess(host1.getHostName(),
-                host2.getJavaPath() + host2.getPathSeperator() + "java " + aeronDir + host1.getPathSeperator() + "pub" + host2.getProperties() +
-                        " -cp " + host2.getClasspath() +
-                        " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " " + embedded + " " + channel + " " + host2.getOptions(),
-                "Test0025-pub", 10);
-
+        for (int i = 0; i < hosts.length; i++) {
+            startProcess(hosts[i].getHostName(),
+                    hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
+                            hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
+                            " -cp " + hosts[i].getClasspath() + " " + commands[i] +
+                            embedded + " " + channel + " " + hosts[i].getOptions(),
+                    testCase.getName() + "-" + types[i], 60);
+        }
         try
         {
             latch.await();

@@ -21,19 +21,59 @@ import com.ibm.staf.STAFHandle;
 import com.ibm.staf.STAFResult;
 import com.ibm.staf.STAFUtil;
 import com.kaazing.staf_aeron.AeronSTAFProcess;
-
+import java.io.File;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-public abstract class Test extends Thread
+import com.kaazing.staf_aeron.STAFHost;
+import com.kaazing.staf_aeron.YAMLTestCase;
+
+public abstract class Test implements Runnable
 {
+    protected YAMLTestCase testCase = null;
     protected HashMap<String, AeronSTAFProcess> processes = null;
     protected CountDownLatch latch = null;
     private static final int PORT_MIN = 30000;
     private static final int PORT_MAX = 60000;
     private static int currentPort = PORT_MIN;
+    protected STAFHost[] hosts = null;
+    protected String[] aeronDirs = null;
+    protected String embedded = "";
+    protected static final String PUB = "uk.co.real_logic.aeron.tools.PublisherTool";
+    protected static final String SUB = "uk.co.real_logic.aeron.tools.SubscriberTool";
+
+    public Test()
+    {
+
+    }
+
+    public Test(YAMLTestCase testCase)
+    {
+        this.testCase = testCase;
+        hosts = new STAFHost[testCase.getStafHosts().size()];
+        for (int i =0 ; i < hosts.length; i++) {
+            hosts[i] = testCase.getStafHosts().get(i);
+        }
+        processes = new HashMap<String, AeronSTAFProcess>();
+        aeronDirs = new String[hosts.length];
+        embedded = testCase.getIsEmbedded() ? "--driver=embedded" :  "--driver=external";
+        latch = new CountDownLatch(hosts.length);
+
+        for (int i = 0; i < hosts.length; i++)
+            aeronDirs[i] = "-Daeron.dir=" + hosts[i].getTmpDir() + testCase.getName();
+    }
+
+    public abstract void run();
+
+    public void cleanup()
+    {
+        for (int i = 0; i < hosts.length; i++) {
+            File f = new File(aeronDirs[i]);
+            f.delete();
+        }
+    }
 
     protected void startProcess(final String machine, final String command, final String name, final int timeout)
     {

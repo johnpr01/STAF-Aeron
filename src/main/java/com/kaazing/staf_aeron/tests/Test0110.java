@@ -76,6 +76,9 @@ public class Test0110 extends Test
         }
     }
 
+    public void run()
+    {}
+
     public Test validate()
     {
         final Map result1 = processes.get("Test0110-sub1").getResults();

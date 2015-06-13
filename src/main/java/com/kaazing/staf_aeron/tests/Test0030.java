@@ -31,41 +31,23 @@ public class Test0030 extends Test
 {
     public Test0030(YAMLTestCase testCase)
     {
-        STAFHost host1 = testCase.getStafHosts().get(0);
-        STAFHost host2 = testCase.getStafHosts().get(1);
-        STAFHost host3 = testCase.getStafHosts().get(2);
-        STAFHost host4 = testCase.getStafHosts().get(3);
+        super(testCase);
+    }
 
-        processes = new HashMap<String, AeronSTAFProcess>();
-        latch = new CountDownLatch(4);
-        final String aeronDir = "-Daeron.dir=" + host1.getTmpDir() + host1.getPathSeperator() + testCase.getName();
-        int port = getPort(host1.getHostName());
-
-        startProcess(host1.getHostName(),
-                host1.getJavaPath() + host1.getPathSeperator() + "java " + aeronDir + host1.getPathSeperator() + "sub" + host1.getProperties() +
-                        " -cp " + host1.getClasspath() +
-                        " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " -c=udp://localhost:" + port + " " + host1.getOptions(),
-                "Test0030-sub1", 10);
-        startProcess(host2.getHostName(),
-                host2.getJavaPath() + host2.getPathSeperator() + "java " + aeronDir + host2.getPathSeperator() + "sub" + host2.getProperties() +
-                        " -cp " + host2.getClasspath() +
-                        " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " -c=udp://localhost:" + port + " " + host2.getOptions(),
-                "Test0030-sub2", 10);
-        startProcess(host3.getHostName(),
-                host3.getJavaPath() + host3.getPathSeperator() + "java " + aeronDir + host3.getPathSeperator() + "sub" + host3.getProperties() +
-                        " -cp " + host3.getClasspath() +
-                        " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " -c=udp://localhost:" + port + " " + host3.getOptions(),
-                "Test0030-sub3", 10);
-        startProcess(host4.getHostName(),
-                host4.getJavaPath() + host4.getPathSeperator() + "java " + aeronDir + "/pub" + host4.getProperties() +
-                        " -cp " + host4.getClasspath() +
-                        " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " -c=udp://localhost:" + port + " " + host4.getOptions(),
-                "Test0030-pub", 10);
-
+    public void run() {
+        int port = getPort(hosts[0].getHostName());
+        String channel = "-c=udp://" + hosts[0] + ":" + port;
+        String[] commands = {SUB, SUB, SUB, PUB};
+        String[] types = {"sub", "sub", "sub", "pub"};
+        String[] subnames = {"sub1", "sub2", "sub3", "pub"};
+        for (int i = 0; i < hosts.length; i++) {
+            startProcess(hosts[i].getHostName(),
+                    hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
+                            hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
+                            " -cp " + hosts[i].getClasspath() + " " + commands[i] +
+                            embedded + " " + channel + " " + hosts[i].getOptions(),
+                    "Test0030-" + subnames[i], 60);
+        }
         try
         {
             latch.await();

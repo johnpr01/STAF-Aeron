@@ -64,6 +64,12 @@ public class Test0150 extends Test
             e.printStackTrace();
         }
     }
+
+    public void run()
+    {
+
+    }
+
 // Verification: Communication between other publishers and subscribers will not be affected. After publisher restarts
 // or resumes it should reconnect to the driver and send messages to subscriber successfully
 

@@ -126,7 +126,6 @@ public class AeronSTAFProcess
                 final LinkedList resultMap2 = (LinkedList) result2.resultObj;
                 for (Object item : resultMap2) {
                     HashMap map = (HashMap)item;
-
                     if (((String)map.get("command")).trim().equalsIgnoreCase(command.trim())) {
                         pid = Integer.parseInt((String)map.get("pid"));
                     }

@@ -71,6 +71,9 @@ public class Test0055 extends Test
             e.printStackTrace();
         }
     }
+
+    public void run()
+    {}
 // the expected result for the suspend case: while the media driver is suspended, the publisher will be able to send
 // until it is flow controlled. Once the media driver resumes, the subscriber will receive a burst of data
     public Test validate()

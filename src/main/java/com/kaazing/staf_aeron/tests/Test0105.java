@@ -77,6 +77,10 @@ public class Test0105 extends Test
             e.printStackTrace();
         }
     }
+
+    public void run()
+    {}
+
 // Verification: The subscriber will only receive messages from publisher 1.
 
     public Test validate()

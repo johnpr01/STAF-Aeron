@@ -78,6 +78,10 @@ public class Test0045 extends Test
             e.printStackTrace();
         }
     }
+
+    public void run()
+    {}
+
 // Expected results: As it falls behind, sub3 will disconnect and reconnect. When it reconnects, it should start
 // receiving messages from the live stream. Sub1 and 2 are not affected.
     public Test validate()

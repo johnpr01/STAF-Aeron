@@ -64,6 +64,12 @@ public class Test0145 extends Test
             e.printStackTrace();
         }
     }
+
+    public void run()
+    {
+
+    }
+
 // Verification: expectation pubs and subs would reconnect to the driver and communication would resume
 
     public Test validate()

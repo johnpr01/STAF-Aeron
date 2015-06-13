@@ -16,43 +16,32 @@
 
 package com.kaazing.staf_aeron.tests;
 
-import com.kaazing.staf_aeron.AeronSTAFProcess;
-import com.kaazing.staf_aeron.STAFHost;
-import com.kaazing.staf_aeron.YAMLTestCase;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.kaazing.staf_aeron.YAMLTestCase;
 import java.util.concurrent.CountDownLatch;
 
 public class Test0000 extends Test
 {
     public Test0000(YAMLTestCase testCase)
     {
-        STAFHost host1 = testCase.getStafHosts().get(0);
-        processes = new HashMap<String, AeronSTAFProcess>();
-        latch = new CountDownLatch(2);
-        final String aeronDir = "-Daeron.dir=" + host1.getTmpDir() + testCase.getName();
+        super(testCase);
+    }
 
-        int port = getPort(host1.getHostName());
-        String channel = "-c=udp://localhost:" + port;
-        String embedded = testCase.getIsEmbedded() ? " --driver=embedded" :  "--driver=external";
+    public void run()
+    {
+        int port = getPort(hosts[0].getHostName());
+        String channel = "-c=udp://" + hosts[0].getIpAddress() + ":" + port;
+        String[] commands = { SUB, PUB };
+        String[] types = { "sub", "pub" };
 
-        startProcess(host1.getHostName(),
-                host1.getJavaPath() + host1.getPathSeperator() + "java " + aeronDir + host1.getPathSeperator() +
-                        "sub " + host1.getProperties() +
-                        " -cp " + host1.getClasspath() +
-                        " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        embedded + " " + channel + " " + host1.getOptions(),
-                testCase.getName() + "-sub", 60);
-
-        startProcess(host1.getHostName(),
-                host1.getJavaPath() + host1.getPathSeperator() + "java " + aeronDir + host1.getPathSeperator() +
-                        "pub" + host1.getProperties() +
-                        " -cp " + host1.getClasspath() +
-                        " uk.co.real_logic.aeron.tools.PublisherTool" + embedded +
-                        " " + channel + " " + host1.getOptions(),
-                testCase.getName() + "-pub", 60);
-
+        for (int i = 0; i < hosts.length; i++) {
+            startProcess(hosts[i].getHostName(),
+                    hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
+                            hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
+                            " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
+                            embedded + " " + channel + " " + hosts[i].getOptions(),
+                    testCase.getName() + "-" + types[i], 60);
+        }
         try
         {
             latch.await();
@@ -62,6 +51,7 @@ public class Test0000 extends Test
             e.printStackTrace();
         }
         validate();
+        cleanup();
     }
 
     public Test validate()

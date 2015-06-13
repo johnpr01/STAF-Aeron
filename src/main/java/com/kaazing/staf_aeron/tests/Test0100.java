@@ -76,6 +76,10 @@ public class Test0100 extends Test
             e.printStackTrace();
         }
     }
+
+    public void run()
+    {}
+
 // Verification: The subscriber will receive messages from both publishers
 
     public Test validate()

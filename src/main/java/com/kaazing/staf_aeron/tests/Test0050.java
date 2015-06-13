@@ -78,6 +78,9 @@ public class Test0050 extends Test
             e.printStackTrace();
         }
     }
+
+    public void run()
+    {}
 // Current results: The rate of consumption of the other subscribers will slow down to match the rate of sub 3
     public Test validate()
     {

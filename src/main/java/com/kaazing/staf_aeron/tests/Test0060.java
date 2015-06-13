@@ -71,6 +71,10 @@ public class Test0060 extends Test
             e.printStackTrace();
         }
     }
+
+    public void run()
+    {}
+
 // Expected result: Verify the media driver files are NOT removed. Verify the publisher and subscriber can reconnect,
 // communication resumes and the driver files are accessible.
     public Test validate()

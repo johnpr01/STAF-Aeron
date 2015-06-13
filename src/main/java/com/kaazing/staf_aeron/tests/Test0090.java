@@ -85,6 +85,10 @@ public class Test0090 extends Test
             e.printStackTrace();
         }
     }
+
+    public void run()
+    {}
+
 // Expected results: Sub 1 and Sub 3 continue to receive messages from the publisher.
 // Repeat the scenario suspending one of the subscribers
 

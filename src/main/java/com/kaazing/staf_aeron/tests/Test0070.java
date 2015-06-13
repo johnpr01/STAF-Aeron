@@ -72,6 +72,10 @@ public class Test0070 extends Test
             e.printStackTrace();
         }
     }
+
+    public void run()
+    {}
+
 // Expected results: The clients should reconnect to the driver and communication should resume
 // Repeat the test suspending the media driver
     public Test validate()

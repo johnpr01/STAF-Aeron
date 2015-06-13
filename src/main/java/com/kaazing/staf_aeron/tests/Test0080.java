@@ -81,6 +81,10 @@ public class Test0080 extends Test
             e.printStackTrace();
         }
     }
+
+    public void run()
+    {}
+
 // the expected result: the subscriber will continue to get messages from publisher 2. Eventually the subscriber reports
 // the connection with publisher 1 is INACTIVE
     public Test validate()

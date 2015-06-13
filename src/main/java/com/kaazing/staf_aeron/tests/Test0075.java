@@ -81,6 +81,10 @@ public class Test0075 extends Test
             e.printStackTrace();
         }
     }
+
+    public void run()
+    {}
+
 // the expected result for the suspend case: after the publisher is resumed, the subscriber should
 // continue to receive messages
     public Test validate()

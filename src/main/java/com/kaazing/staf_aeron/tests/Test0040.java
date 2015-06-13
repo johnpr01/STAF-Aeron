@@ -60,6 +60,10 @@ public class Test0040 extends Test
         }
     }
 
+    public void run()
+    {}
+
+
     public Test validate()
     {
         final Map result1 = processes.get("Test0040-sub").getResults();

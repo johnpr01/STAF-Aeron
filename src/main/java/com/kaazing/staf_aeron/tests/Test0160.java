@@ -53,6 +53,11 @@ public class Test0160 extends Test
         }
     }
 
+    public void run()
+    {
+
+    }
+
     public Test validate()
     {
         final Map result1 = processes.get("Test0160-Thwack").getResults();
