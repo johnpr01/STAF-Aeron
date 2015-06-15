@@ -28,11 +28,11 @@ public class Test0125 extends Test
     public void run()
     {
         int[] ports = {
-                getPort(hosts[0].getIpAddress()),
-                getPort(hosts[1].getIpAddress()),
-                getPort(hosts[2].getIpAddress()),
-                getPort(hosts[3].getIpAddress()),
-                getPort(hosts[4].getIpAddress())
+                getPort(hosts[0]),
+                getPort(hosts[1]),
+                getPort(hosts[2]),
+                getPort(hosts[3]),
+                getPort(hosts[4])
         };
         String[] channels = {
                 "udp://" + hosts[0].getIpAddress() + ":" + ports[0],
@@ -46,7 +46,7 @@ public class Test0125 extends Test
         String[] types = { "sub1", "sub2", "sub3", "sub4", "sub5", "pub1", "pub2", "pub3", "pub4", "pub5" };
 
         for (int i = 0; i < hosts.length; i++) {
-            startProcess(hosts[i].getHostName(),
+            startProcess(hosts[i],
                     hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
                             hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
                             " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +

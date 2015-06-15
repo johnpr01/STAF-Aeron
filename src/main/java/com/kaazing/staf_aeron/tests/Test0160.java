@@ -58,9 +58,8 @@ public class Test0160 extends Test
 
     }
 
-    public Test validate()
+    public void validate()
     {
-        final Map result1 = processes.get("Test0160-Thwack").getResults();
-        return this;
+
     }
 }

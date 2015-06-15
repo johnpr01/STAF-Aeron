@@ -43,7 +43,7 @@ public class Test0005 extends Test
 
     public void run()
     {
-        int port = getPort(hosts[0].getHostName());
+        int port = getPort(hosts[0]);
         String channel = "udp://" + hosts[1].getIpAddress() + ":" + port;
         String[] commands = { PUB, SUB };
         String[] types = { "pub", "sub" };
@@ -56,7 +56,7 @@ public class Test0005 extends Test
                     e.printStackTrace();
                 }
             }
-            startProcess(hosts[i].getHostName(),
+            startProcess(hosts[i],
                     hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
                             hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
                             " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +

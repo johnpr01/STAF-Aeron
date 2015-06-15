@@ -28,13 +28,13 @@ public class Test0040 extends Test
 
     public void run()
     {
-        int port = getPort(hosts[0].getIpAddress());
+        int port = getPort(hosts[0]);
         String channel = "udp://" + hosts[0].getIpAddress() + ":" + port;
         String[] commands = { SUB, PUB };
         String[] types = { "sub", "pub" };
 
         for (int i = 0; i < hosts.length; i++) {
-            startProcess(hosts[i].getIpAddress(),
+            startProcess(hosts[i],
                     hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
                             hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
                             " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +

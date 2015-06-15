@@ -72,10 +72,8 @@ public class Test0145 extends Test
 
 // Verification: expectation pubs and subs would reconnect to the driver and communication would resume
 
-    public Test validate()
+    public void validate()
     {
-        final Map result1 = processes.get("Test0145-sub").getResults();
-        final Map result2 = processes.get("Test0145-pub").getResults();
-                return this;
+
     }
 }

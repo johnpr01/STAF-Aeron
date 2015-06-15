@@ -36,20 +36,20 @@ public class Test0070 extends Test
 
     public void run()
     {
-        int port = getPort(hosts[0].getIpAddress());
+        int port = getPort(hosts[0]);
         String channel = "udp://" + hosts[0].getIpAddress() + ":" + port;
         String[] commands = { SUB, PUB };
         String[] types = { "sub", "pub" };
 
 
         for (int i = 0; i < hosts.length; i++) {
-            startProcess(hosts[i].getIpAddress(),
+            startProcess(hosts[i],
                     hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
                             hosts[0].getPathSeperator() + " " + "-Daeron.dir.delete.on.exit=false" +
                             " -cp " + hosts[i].getClasspath() + " " + DRIVER,
                     testCase.getName() + "-DRIVER-" + types[i], -1);
 
-            startProcess(hosts[i].getHostName(),
+            startProcess(hosts[i],
                     hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
                             hosts[i].getPathSeperator() + " " + hosts[i].getProperties() +
                             " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
@@ -65,7 +65,7 @@ public class Test0070 extends Test
 
             Thread.sleep(3000);
 
-            startProcess(hosts[0].getIpAddress(),
+            startProcess(hosts[0],
                     hosts[0].getJavaPath() + hosts[0].getPathSeperator() + "java " + aeronDirs[0] +
                             hosts[0].getPathSeperator() + " " + "-Daeron.dir.delete.on.exit=false" +
                             " -cp " + hosts[0].getClasspath() + " " + DRIVER,

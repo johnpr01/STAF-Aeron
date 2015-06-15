@@ -37,10 +37,10 @@ public class AeronSTAFProcess
     protected static final String SERVICE = "Process";
     private String request = "";
 
-    public AeronSTAFProcess()
-    {
+    //public AeronSTAFProcess()
+    //{
 
-    }
+    //}
 
     public AeronSTAFProcess(STAFHost machine, String command, String name, CountDownLatch completionLatch, int timeout)
     {

@@ -35,20 +35,20 @@ public class Test0065 extends Test
 
     public void run()
     {
-        int port = getPort(hosts[0].getIpAddress());
+        int port = getPort(hosts[0]);
         String channel = "udp://" + hosts[0].getIpAddress() + ":" + port;
         String[] commands = { SUB, PUB };
         String[] types = { "sub", "pub" };
 
 
         for (int i = 0; i < hosts.length; i++) {
-            startProcess(hosts[i].getIpAddress(),
+            startProcess(hosts[i],
                     hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
                             hosts[0].getPathSeperator() + " " + "-Daeron.dir.delete.on.exit=false" +
                             " -cp " + hosts[i].getClasspath() + " " + DRIVER,
                     testCase.getName() + "-DRIVER-" + types[i], -1);
 
-            startProcess(hosts[i].getHostName(),
+            startProcess(hosts[i],
                     hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
                             hosts[i].getPathSeperator() + " " + hosts[i].getProperties() +
                             " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
@@ -59,12 +59,12 @@ public class Test0065 extends Test
         {
             Thread.sleep(10000);
 
-            killProcess(testCase.getName() + "-DRIVER-" + types[1]);
+            killProcess(testCase.getName() + "-DRIVER-" + types[1], false);
 
 
             Thread.sleep(3000);
 
-            startProcess(hosts[1].getIpAddress(),
+            startProcess(hosts[1],
                     hosts[1].getJavaPath() + hosts[1].getPathSeperator() + "java " + aeronDirs[1] +
                             hosts[1].getPathSeperator() + " " + "-Daeron.dir.delete.on.exit=false" +
                         " -cp " + hosts[1].getClasspath() + " " + DRIVER,
@@ -72,8 +72,8 @@ public class Test0065 extends Test
 
             latch.await();
 
-            killProcess(testCase.getName() + "-DRIVER-" + types[0]);
-            killProcess(testCase.getName() + "-DRIVER-" + types[1]);
+            killProcess(testCase.getName() + "-DRIVER-" + types[0], false);
+            killProcess(testCase.getName() + "-DRIVER-" + types[1], false);
         } catch (Exception e)
         {
             e.printStackTrace();

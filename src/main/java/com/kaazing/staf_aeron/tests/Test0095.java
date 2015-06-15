@@ -81,12 +81,7 @@ public class Test0095 extends Test
 
 // Verification: The subscriber will receive messages from all three publishers
 
-    public Test validate()
+    public void validate()
     {
-        final Map result1 = processes.get("Test0095-sub").getResults();
-        final Map result2 = processes.get("Test0095-pub1").getResults();
-        final Map result3 = processes.get("Test0095-pub2").getResults();
-        final Map result4 = processes.get("Test0095-pub3").getResults();
-        return this;
     }
 }

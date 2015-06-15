@@ -89,12 +89,8 @@ public class Test0120 extends Test
 
     }
 
-    public Test validate()
+    public void validate()
     {
-        final Map result1 = processes.get("Test0120-sub1").getResults();
-        final Map result2 = processes.get("Test0120-sub2").getResults();
-        final Map result3 = processes.get("Test0120-sub3").getResults();
-        final Map result4 = processes.get("Test0120-pub").getResults();
-        return this;
+
     }
 }

@@ -82,11 +82,7 @@ public class Test0100 extends Test
 
 // Verification: The subscriber will receive messages from both publishers
 
-    public Test validate()
+    public void validate()
     {
-        final Map result1 = processes.get("Test0100-sub").getResults();
-        final Map result2 = processes.get("Test0100-pub1").getResults();
-        final Map result3 = processes.get("Test0100-pub2").getResults();
-        return this;
     }
 }

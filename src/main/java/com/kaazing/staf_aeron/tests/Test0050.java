@@ -36,9 +36,9 @@ public class Test0050 extends Test
     public void run()
     {
         int[] ports = {
-                getPort(hosts[0].getIpAddress()),
-                getPort(hosts[1].getIpAddress()),
-                getPort(hosts[2].getIpAddress())
+                getPort(hosts[0]),
+                getPort(hosts[1]),
+                getPort(hosts[2])
         };
         String[] channels = {
                 "udp://" + hosts[0].getIpAddress() + ":" + ports[0],
@@ -50,14 +50,14 @@ public class Test0050 extends Test
 
         for (int i = 0; i < hosts.length; i++) {
             if (i < hosts.length - 1) {
-                startProcess(hosts[i].getHostName(),
+                startProcess(hosts[i],
                         hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
                                 hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
                                 " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
                                 embedded + " -c=" + channels[i] + " " + hosts[i].getOptions(),
                         testCase.getName() + "-" + types[i], 60);
             } else {
-                startProcess(hosts[i].getHostName(),
+                startProcess(hosts[i],
                         hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
                                 hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
                                 " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +

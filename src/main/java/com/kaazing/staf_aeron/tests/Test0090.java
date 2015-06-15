@@ -35,8 +35,8 @@ public class Test0090 extends Test
     public void run()
     {
         int[] ports = {
-                getPort(hosts[0].getIpAddress()),
-                getPort(hosts[1].getIpAddress())
+                getPort(hosts[0]),
+                getPort(hosts[1])
         };
 
         String[] channels = {
@@ -47,21 +47,21 @@ public class Test0090 extends Test
         String[] types = { "sub", "sub2", "pub" };
 
         for (int i = 0; i < hosts.length; i++) {
-            startProcess(hosts[i].getIpAddress(),
+            startProcess(hosts[i],
                     hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
                             hosts[0].getPathSeperator() + " " + "-Daeron.dir.delete.on.exit=false" +
                             " -cp " + hosts[i].getClasspath() + " " + DRIVER,
                     testCase.getName() + "-DRIVER-" + types[i], -1);
 
             if (i < hosts.length - 1) {
-                startProcess(hosts[i].getIpAddress(),
+                startProcess(hosts[i],
                         hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
                                 hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
                                 " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
                                 embedded + " -c=" + channels[i] + " " + hosts[i].getOptions(),
                         testCase.getName() + "-" + types[i], 60);
             } else {
-                startProcess(hosts[i].getIpAddress(),
+                startProcess(hosts[i],
                         hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
                                 hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
                                 " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +

@@ -73,10 +73,8 @@ public class Test0150 extends Test
 // Verification: Communication between other publishers and subscribers will not be affected. After publisher restarts
 // or resumes it should reconnect to the driver and send messages to subscriber successfully
 
-    public Test validate()
+    public void validate()
     {
-        final Map result1 = processes.get("Test0150-sub").getResults();
-        final Map result2 = processes.get("Test0150-pub").getResults();
-                return this;
+
     }
 }

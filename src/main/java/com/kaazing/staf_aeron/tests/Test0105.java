@@ -83,11 +83,6 @@ public class Test0105 extends Test
 
 // Verification: The subscriber will only receive messages from publisher 1.
 
-    public Test validate()
-    {
-        final Map result1 = processes.get("Test0105-sub").getResults();
-        final Map result2 = processes.get("Test0105-pub1").getResults();
-        final Map result3 = processes.get("Test0105-pub2").getResults();
-        return this;
-    }
+    public void validate()
+    {    }
 }
