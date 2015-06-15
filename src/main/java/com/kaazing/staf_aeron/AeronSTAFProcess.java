@@ -17,9 +17,6 @@
 package com.kaazing.staf_aeron;
 
 import com.ibm.staf.*;
-import com.ibm.staf.wrapper.*;
-import com.ibm.staf.service.*;
-
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -48,14 +45,13 @@ public class AeronSTAFProcess
     {
         this.machine = machine;
         this.command = command;
-        //System.out.println("Command: " + command);
         this.completionLatch = completionLatch;
         this.timeout = timeout;
         this.name = name;
 
         try {
             handle = new STAFHandle(name);
-	    run();
+            run();
         } catch (STAFException e) {
             e.printStackTrace();
         }
@@ -109,6 +105,7 @@ public class AeronSTAFProcess
                     }
                 }
                 output.close();
+                completionLatch.countDown();
             };
 
             final Thread work = new Thread(task);
@@ -138,7 +135,6 @@ public class AeronSTAFProcess
                 e.printStackTrace();
             }
 
-            completionLatch.countDown();
             handle.unRegister();
         } catch (Exception e) {
             e.printStackTrace();

@@ -50,7 +50,7 @@ public class Test0125 extends Test
         for (int i = 0; i < hosts.length; i++) {
             if (i == 0 || i == 5) {
                 startProcess(hosts[i].getHostName(),
-                        hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
+                        hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] + i +
                                 hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
                                 " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
                                 embedded + " " + channel1 + " " + hosts[i].getOptions(),
@@ -58,7 +58,7 @@ public class Test0125 extends Test
             }
             if (i == 1 || i == 6) {
                 startProcess(hosts[i].getHostName(),
-                        hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
+                        hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] + i +
                                 hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
                                 " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
                                 embedded + " " + channel2 + " " + hosts[i].getOptions(),
@@ -66,7 +66,7 @@ public class Test0125 extends Test
             }
             if (i == 2 || i == 7) {
                 startProcess(hosts[i].getHostName(),
-                        hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
+                        hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] + i +
                                 hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
                                 " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
                                 embedded + " " + channel3 + " " + hosts[i].getOptions(),
@@ -74,7 +74,7 @@ public class Test0125 extends Test
             }
             if (i == 3 || i == 8) {
                 startProcess(hosts[i].getHostName(),
-                        hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
+                        hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] + i +
                                 hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
                                 " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
                                 embedded + " " + channel4 + " " + hosts[i].getOptions(),
@@ -82,7 +82,7 @@ public class Test0125 extends Test
             }
             if (i == 4 || i == 9) {
                 startProcess(hosts[i].getHostName(),
-                        hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
+                        hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] + i +
                                 hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
                                 " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
                                 embedded + " " + channel5 + " " + hosts[i].getOptions(),
@@ -98,7 +98,7 @@ public class Test0125 extends Test
             e.printStackTrace();
         }
 
-        cleanup();
+        cleanup(true);
     }
 
     public Test validate()

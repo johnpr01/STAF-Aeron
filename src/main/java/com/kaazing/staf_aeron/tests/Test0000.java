@@ -51,7 +51,7 @@ public class Test0000 extends Test
             e.printStackTrace();
         }
         validate();
-        cleanup();
+        cleanup(false);
     }
 
     public Test validate()

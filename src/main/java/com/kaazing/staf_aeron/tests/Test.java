@@ -24,6 +24,7 @@ import com.kaazing.staf_aeron.AeronSTAFProcess;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
@@ -62,18 +63,60 @@ public abstract class Test implements Runnable
         latch = new CountDownLatch(hosts.length);
 
         for (int i = 0; i < hosts.length; i++)
-            aeronDirs[i] = "-Daeron.dir=" + hosts[i].getTmpDir() + testCase.getName();
+            aeronDirs[i] = "-Daeron.dir=" + hosts[i].getTmpDir() + hosts[i].getPathSeperator() + testCase.getName();
     }
 
     public abstract void run();
 
-    public void cleanup()
+    public void cleanup(boolean dirNums)
     {
         for (int i = 0; i < hosts.length; i++) {
-            File f = new File(aeronDirs[i]);
-            f.delete();
+            String f = null;
+            if (dirNums) {
+                f = aeronDirs[i] + i;
+            } else {
+                f = aeronDirs[i];
+            }
+            f = f.substring(f.indexOf('=') + 1);
+            try {
+
+                String command = "java -cp staf-aeron.jar com.kaazing.staf_aeron.util.Cleanup " + f;
+                String timeout = "15s";
+                final String request = "START SHELL COMMAND " + STAFUtil.wrapData(command) +
+                        " WAIT " + timeout + " RETURNSTDOUT STDERRTOSTDOUT";
+                STAFHandle tmp = new STAFHandle("cleanup");
+                STAFResult result = tmp.submit2(hosts[i].getIpAddress(), "Process", request);
+
+                if (result.rc != 0) {
+                    try {
+                        System.out.println("Cleanup failed! Timed out");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        final Map resultMap = (Map) result.resultObj;
+                        final String processRC = (String) resultMap.get("rc");
+
+                        if (!processRC.equals("0")) {
+                            System.out.println("Cleanup failed! " + result.result);
+                            final List returnedFileList = (List) resultMap.get("fileList");
+                            final Map stdoutMap = (Map) returnedFileList.get(0);
+                            System.out.println((String) stdoutMap.get("data"));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                tmp.unRegister();
+            } catch (Exception e) {
+
+            }
         }
+
+
     }
+
 
     protected void startProcess(final String machine, final String command, final String name, final int timeout)
     {
@@ -100,7 +143,7 @@ public abstract class Test implements Runnable
             }
             try {
                 do {
-                    String command = "java -cp staf.jar com.kaazing.staf_aeron.util.PortStatus " + currentPort;
+                    String command = "java -cp staf-aeron.jar com.kaazing.staf_aeron.util.PortStatus " + currentPort;
                     String timeout = "5s";
                     final String request = "START SHELL COMMAND " + STAFUtil.wrapData(command) +
                             " WAIT " + timeout + " RETURNSTDOUT STDERRTOSTDOUT";

@@ -59,7 +59,7 @@ public class Test0005 extends Test
         {
             e.printStackTrace();
         }
-        cleanup();
+        cleanup(false);
     }
 
     public Test validate()

@@ -1,17 +1,17 @@
 testCases:
 - name: Test0000
   hosts: [buckwasher, buckwasher]
-  options: [-m 1000 --verify yes, "--verify yes -r 1000m@max,10s@0mps"]
+  options: [-m 1000 --verify yes, "--verify yes -r 1000m@max,5s@0mps"]
   properties: [-Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536]
   isEmbedded: true
 - name: Test0005
   hosts: [buckwasher, buckwasher]
-  options: [-m 1000, --verify yes]
+  options: ["--verify yes -r 1000m@max,7s@0mps", -m 1000 --verify yes]
   properties: [-Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536]
   isEmbedded: true
 - name: Test0125
   hosts: [buckwasher, buckwasher, buckwasher, buckwasher, buckwasher, buckwasher, buckwasher, buckwasher, buckwasher, buckwasher]
-  options: [--verify yes -m 1000, --verify yes -m 1000, --verify yes -m 1000, --verify yes -m 1000, --verify yes -m 1000, "--verify yes -r 1000m@max,30s@0mps", "--verify yes -r 1000m@max,30s@0mps", "--verify yes -r 1000m@max,30s@0mps", "--verify yes -r 1000m@max,30s@0mps", "--verify yes -r 1000m@max,30s@0mps"]
+  options: [--verify yes -m 1000, --verify yes -m 1000, --verify yes -m 1000, --verify yes -m 1000, --verify yes -m 1000, "--verify yes -r 1000m@max,20s@0mps", "--verify yes -r 1000m@max,20s@0mps", "--verify yes -r 1000m@max,20s@0mps", "--verify yes -r 1000m@max,20s@0mps", "--verify yes -r 1000m@max,20s@0mps"]
   properties: [-Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536]
   isEmbedded: true
 
