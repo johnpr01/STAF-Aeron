@@ -35,13 +35,13 @@ public class Test0030 extends Test
     }
 
     public void run() {
-        int port = getPort(hosts[0].getHostName());
+        int port = getPort(hosts[0]);
         String channel = "-c=udp://" + hosts[0] + ":" + port;
         String[] commands = {SUB, SUB, SUB, PUB};
         String[] types = {"sub", "sub", "sub", "pub"};
         String[] subnames = {"sub1", "sub2", "sub3", "pub"};
         for (int i = 0; i < hosts.length; i++) {
-            startProcess(hosts[i].getHostName(),
+            startProcess(hosts[i],
                     hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
                             hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
                             " -cp " + hosts[i].getClasspath() + " " + commands[i] +

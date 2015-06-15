@@ -37,7 +37,7 @@ public class Test0120 extends Test
         processes = new HashMap<String, AeronSTAFProcess>();
         latch = new CountDownLatch(4);
 
-        startProcess(host1.getHostName(),
+        startProcess(host1,
                 host1.getJavaPath() + host1.getPathSeperator() + "java -Daeron.dir=" + host1.getTmpDir() + host1.getPathSeperator() + testCase.getName() + host1.getPathSeperator() + "pub" + host1.getProperties() +
                         " -cp " + host1.getClasspath() +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
@@ -53,21 +53,21 @@ public class Test0120 extends Test
             e.printStackTrace();
         }
 
-        startProcess(host2.getHostName(),
+        startProcess(host2,
                 host2.getJavaPath() + host2.getPathSeperator() + "java -Daeron.dir=" + host2.getTmpDir() + host2.getPathSeperator() + testCase.getName() + host2.getPathSeperator() + "sub" + host2.getProperties()  +
                         " -cp " + host2.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
                         " --driver=embedded -c=udp://localhost:44444 " + host2.getOptions(),
                 "Test0120-sub1", 10);
 
-        startProcess(host3.getHostName(),
+        startProcess(host3,
                 host3.getJavaPath() + host3.getPathSeperator() + "java -Daeron.dir=" + host3.getTmpDir() + host3.getPathSeperator() + testCase.getName() + host3.getPathSeperator() + "sub" + host3.getProperties()  +
                         " -cp " + host3.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
                         " --driver=embedded -c=udp://localhost:44444 " + host3.getOptions(),
                 "Test0120-sub2", 10);
 
-        startProcess(host3.getHostName(),
+        startProcess(host3,
                 host4.getJavaPath() + host4.getPathSeperator() + "java -Daeron.dir=" + host4.getTmpDir() + host4.getPathSeperator() + testCase.getName() + host4.getPathSeperator() + "sub" + host4.getProperties()  +
                         " -cp " + host4.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +

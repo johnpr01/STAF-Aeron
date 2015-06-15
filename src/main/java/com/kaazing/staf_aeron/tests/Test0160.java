@@ -34,9 +34,9 @@ public class Test0160 extends Test
         processes = new HashMap<String, AeronSTAFProcess>();
         latch = new CountDownLatch(2);
         final String aeronDir = "-Daeron.dir=" + host1.getTmpDir() + host1.getPathSeperator() + testCase.getName();
-        int port = getPort(host1.getHostName());
+        int port = getPort(host1);
 
-        startProcess(host1.getHostName(),
+        startProcess(host1,
                 host1.getJavaPath() + host1.getPathSeperator() + "java " + aeronDir + host1.getPathSeperator() + "sub" + host1.getProperties() +
                         " -cp " + host1.getClasspath() +
                         " uk.co.real_logic.aeron.tools.ThwackerTool" +

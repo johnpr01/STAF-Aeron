@@ -36,17 +36,17 @@ public class Test0115 extends Test
         processes = new HashMap<String, AeronSTAFProcess>();
         latch = new CountDownLatch(3);
         final String aeronDir = "-Daeron.dir=" + host1.getTmpDir() + host1.getPathSeperator() + testCase.getName();
-        int port = getPort(host1.getHostName());
+        int port = getPort(host1);
         String channel = "-c=udp://localhost:" + port;
         String embedded = testCase.getIsEmbedded() ? " --driver=embedded" :  "--driver=external";
 
-        startProcess(host1.getHostName(),
+        startProcess(host1,
                 host1.getJavaPath() + host1.getPathSeperator() + "java " + aeronDir + host1.getPathSeperator() + "sub" + host1.getProperties() +
                         " -cp " + host1.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
                         " " + embedded + " " + channel + " " + host1.getOptions(),
                 "Test0115-sub1", 10);
-        startProcess(host2.getHostName(),
+        startProcess(host2,
                 host2.getJavaPath() + host2.getPathSeperator() + "java " + aeronDir + host2.getPathSeperator() + "pub" + host2.getProperties() +
                         " -cp " + host2.getClasspath() +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
@@ -62,7 +62,7 @@ public class Test0115 extends Test
             e.printStackTrace();
         }
 
-        startProcess(host3.getHostName(),
+        startProcess(host3,
                 host3.getJavaPath() + host3.getPathSeperator() + "java " + aeronDir + host3.getPathSeperator() + "sub" + host3.getProperties() +
                         " -cp " + host3.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +

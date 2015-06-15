@@ -33,11 +33,11 @@ public class Test0125 extends Test
 
     public void run()
     {
-        int port1 = getPort(hosts[0].getHostName());
-        int port2 = getPort(hosts[1].getHostName());
-        int port3 = getPort(hosts[2].getHostName());
-        int port4 = getPort(hosts[3].getHostName());
-        int port5 = getPort(hosts[4].getHostName());
+        int port1 = getPort(hosts[0]);
+        int port2 = getPort(hosts[1]);
+        int port3 = getPort(hosts[2]);
+        int port4 = getPort(hosts[3]);
+        int port5 = getPort(hosts[4]);
         String channel1 = "-c=udp://" + hosts[0].getIpAddress() + ":" + port1;
         String channel2 = "-c=udp://" + hosts[1].getIpAddress() + ":" + port2;
         String channel3 = "-c=udp://" + hosts[2].getIpAddress() + ":" + port3;
@@ -49,7 +49,8 @@ public class Test0125 extends Test
 
         for (int i = 0; i < hosts.length; i++) {
             if (i == 0 || i == 5) {
-                startProcess(hosts[i].getHostName(),
+
+                startProcess(hosts[i],
                         hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] + i +
                                 hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
                                 " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
@@ -57,7 +58,7 @@ public class Test0125 extends Test
                         testCase.getName() + "-" + subNames[i], 120);
             }
             if (i == 1 || i == 6) {
-                startProcess(hosts[i].getHostName(),
+                startProcess(hosts[i],
                         hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] + i +
                                 hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
                                 " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
@@ -65,7 +66,7 @@ public class Test0125 extends Test
                         testCase.getName() + "-" + subNames[i], 120);
             }
             if (i == 2 || i == 7) {
-                startProcess(hosts[i].getHostName(),
+                startProcess(hosts[i],
                         hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] + i +
                                 hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
                                 " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
@@ -73,7 +74,7 @@ public class Test0125 extends Test
                         testCase.getName() + "-" + subNames[i], 120);
             }
             if (i == 3 || i == 8) {
-                startProcess(hosts[i].getHostName(),
+                startProcess(hosts[i],
                         hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] + i +
                                 hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
                                 " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
@@ -81,7 +82,7 @@ public class Test0125 extends Test
                         testCase.getName() + "-" + subNames[i], 120);
             }
             if (i == 4 || i == 9) {
-                startProcess(hosts[i].getHostName(),
+                startProcess(hosts[i],
                         hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] + i +
                                 hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
                                 " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +

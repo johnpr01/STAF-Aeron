@@ -118,7 +118,7 @@ public abstract class Test implements Runnable
     }
 
 
-    protected void startProcess(final String machine, final String command, final String name, final int timeout)
+    protected void startProcess(final STAFHost machine, final String command, final String name, final int timeout)
     {
         processes.put(name, new AeronSTAFProcess(machine, command, name, latch, timeout));
     }
@@ -134,7 +134,7 @@ public abstract class Test implements Runnable
 
     public abstract Test validate();
 
-    protected int getPort(String machine)
+    protected int getPort(STAFHost machine)
     {
         synchronized (this) {
             boolean found = false;
@@ -148,7 +148,7 @@ public abstract class Test implements Runnable
                     final String request = "START SHELL COMMAND " + STAFUtil.wrapData(command) +
                             " WAIT " + timeout + " RETURNSTDOUT STDERRTOSTDOUT";
                     STAFHandle tmp = new STAFHandle("port");
-                    STAFResult result = tmp.submit2(machine, "Process", request);
+                    STAFResult result = tmp.submit2(machine.getHostName(), "Process", request);
                     if (result.rc != 0) {
                         found = false;
                         currentPort++;

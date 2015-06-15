@@ -38,15 +38,15 @@ public class Test0100 extends Test
         processes = new HashMap<String, AeronSTAFProcess>();
         latch = new CountDownLatch(3);
         final String aeronDir = "-Daeron.dir=" + host1.getTmpDir() + host1.getPathSeperator() + testCase.getName();
-        int port = getPort(host1.getHostName());
+        int port = getPort(host1);
 
-        startProcess(host1.getHostName(),
+        startProcess(host1,
                 host1.getJavaPath() + host1.getPathSeperator() + "java " + aeronDir + host1.getPathSeperator() + "sub" + host1.getProperties() +
                         " -cp " + host1.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
                         " -c=udp://localhost:" + port + " " + host1.getOptions(),
                 "Test0100-sub", 10);
-        startProcess(host2.getHostName(),
+        startProcess(host2,
                 host2.getJavaPath() + host2.getPathSeperator() + "java " + aeronDir + "/pub" + host2.getProperties() +
                         " -cp " + host2.getClasspath() +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
@@ -60,7 +60,7 @@ public class Test0100 extends Test
         catch (Exception e) {
             e.printStackTrace();
         }
-        startProcess(host3.getHostName(),
+        startProcess(host3,
                 host3.getJavaPath() + host3.getPathSeperator() + "java " + aeronDir + "/pub" + host3.getProperties() +
                         " -cp " + host3.getClasspath() +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +

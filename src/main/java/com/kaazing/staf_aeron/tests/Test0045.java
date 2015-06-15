@@ -38,31 +38,31 @@ public class Test0045 extends Test
         processes = new HashMap<String, AeronSTAFProcess>();
         latch = new CountDownLatch(4);
         final String aeronDir = "-Daeron.dir=" + host1.getTmpDir() + host1.getPathSeperator() + testCase.getName();
-        int port = getPort(host1.getHostName());
+        int port = getPort(host1);
         String channel = "-c=udp://localhost:" + port;
         String embedded = testCase.getIsEmbedded() ? " --driver=embedded" :  "--driver=external";
 
-        startProcess(host1.getHostName(),
+        startProcess(host1,
                 host1.getJavaPath() + host1.getPathSeperator() + "java " + aeronDir + host1.getPathSeperator() + "sub" + host1.getProperties() +
                         " -cp " + host1.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
                         " " + embedded + " " + channel + " " + host1.getOptions(),
                 "Test0045-sub1", 10);
-        startProcess(host2.getHostName(),
+        startProcess(host2,
                 host2.getJavaPath() + host2.getPathSeperator() + "java " + aeronDir + host2.getPathSeperator() + "sub" + host2.getProperties() +
                         " -cp " + host2.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
                         " " + embedded + " " + channel + " " + host2.getOptions(),
                 "Test0045-sub2", 10);
         // set rate of consumption of sub3 to be slower than the sending rate of the publisher
-        startProcess(host3.getHostName(),
+        startProcess(host3,
                 host3.getJavaPath() + host3.getPathSeperator() + "java " + aeronDir + host3.getPathSeperator() + "sub" + host3.getProperties() +
                         " -cp " + host3.getClasspath() +
                         " uk.co.real_logic.aeron.tools.SubscriberTool" +
                         " --driver=embedded -r 100kbps -c=udp://localhost:" + port + " " + host3.getOptions(),
                 "Test0045-sub3", 10);
         // set rate of sending of pub to be faster than the consumption rate of sub3
-        startProcess(host4.getHostName(),
+        startProcess(host4,
                 host4.getJavaPath() + host4.getPathSeperator() + "java " + aeronDir + "/pub" + host4.getProperties() +
                         " -cp " + host4.getClasspath() +
                         " uk.co.real_logic.aeron.tools.PublisherTool" +
