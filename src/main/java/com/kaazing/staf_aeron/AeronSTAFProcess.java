@@ -26,7 +26,7 @@ import java.util.concurrent.CountDownLatch;
 
 public class AeronSTAFProcess
 {
-    private String machine;
+    private STAFHost machine;
     private String command;
     private String name;
     private STAFHandle handle;
@@ -42,7 +42,7 @@ public class AeronSTAFProcess
 
     }
 
-    public AeronSTAFProcess(String machine, String command, String name, CountDownLatch completionLatch, int timeout)
+    public AeronSTAFProcess(STAFHost machine, String command, String name, CountDownLatch completionLatch, int timeout)
     {
         this.machine = machine;
         this.command = command;
@@ -78,7 +78,7 @@ public class AeronSTAFProcess
                     e.printStackTrace();
                 }
 
-                result = handle.submit2(machine, SERVICE, request);
+                result = handle.submit2(machine.getHostName(), SERVICE, request);
                 if (result.rc != 0) {
                     try {
                         System.out.println("Test: " + name + " failed! Timed out");
@@ -124,13 +124,14 @@ public class AeronSTAFProcess
             }
             final String request2 = "LIST RUNNING HANDLES LONG";
             STAFHandle handle2 = new STAFHandle("Test");
-            STAFResult result2 = handle2.submit2(machine, SERVICE, request2);
+            STAFResult result2 = handle2.submit2(machine.getHostName(), SERVICE, request2);
             try {
                 final LinkedList resultMap2 = (LinkedList) result2.resultObj;
                 for (Object item : resultMap2) {
                     HashMap map = (HashMap)item;
                     if (((String)map.get("command")).trim().equalsIgnoreCase(command.trim())) {
                         pid = Integer.parseInt((String)map.get("pid"));
+                        System.out.print("Process pid is : " + pid);
                     }
 
                 }
@@ -151,9 +152,15 @@ public class AeronSTAFProcess
     {
         try {
             final STAFHandle killHandle = new STAFHandle("kill-" + name);
-            final String request = "START SHELL COMMAND " + STAFUtil.wrapData("kill " + pid) + " WAIT RETURNSTDOUT STDERRTOSTDOUT";
+            String killCmd;
+            if(machine.getOS().equalsIgnoreCase("windows")){
+                killCmd = "taskkill /pid ";
+            } else {
+                killCmd = "kill ";
+            }
+            final String request = "START SHELL COMMAND " + STAFUtil.wrapData(killCmd + pid) + " WAIT RETURNSTDOUT STDERRTOSTDOUT";
 
-            final STAFResult result = killHandle.submit2(machine, SERVICE, request);
+            final STAFResult result = killHandle.submit2(machine.getHostName(), SERVICE, request);
             if (result.rc != 0) {
                 System.out.println("Kill Test Failure: " + name + " is still running!");
             } else {
@@ -177,11 +184,19 @@ public class AeronSTAFProcess
     public void pause()
     {
         try {
+            //For windows pause/resume, PsTools must be installed and on the system path
+            // https://technet.microsoft.com/en-us/sysinternals/bb897540.aspx
             final STAFHandle pauseHandle = new STAFHandle("pause-" + name);
-            final String request = "START SHELL COMMAND `kill -19 " + pid +
-                    "` WAIT " + timeout + "s RETURNSTDOUT STDERRTOSTDOUT";
+            String killCmd;
+            if(machine.getOS().equalsIgnoreCase("windows")){
+                killCmd = "pssuspend ";
+            } else {
+                killCmd = "kill -19 ";
+            }
+            final String request = "START SHELL COMMAND " + STAFUtil.wrapData(killCmd + pid) +
+                    " WAIT " + timeout + "s RETURNSTDOUT STDERRTOSTDOUT";
 
-            final STAFResult result = pauseHandle.submit2(machine, SERVICE, request);
+            final STAFResult result = pauseHandle.submit2(machine.getHostName(), SERVICE, request);
             if (result.rc != 0) {
                 System.out.println("ERROR: STAF " + machine + " " + SERVICE + " " + request +
                         " RC: " + result.rc + ", Result: " + result.result);
@@ -196,10 +211,18 @@ public class AeronSTAFProcess
     public void resume()
     {
         try {
+            //For windows pause/resume, PsTools must be installed and on the system path
+            // https://technet.microsoft.com/en-us/sysinternals/bb897540.aspx
             final STAFHandle resumeHandle = new STAFHandle("resume-" + name);
-            final String request = "START SHELL COMMAND " + STAFUtil.wrapData("kill -18 " + pid) +
+            String killCmd;
+            if(machine.getOS().equalsIgnoreCase("windows")){
+                killCmd = "pssuspend -r ";
+            } else {
+                killCmd = "kill -18 ";
+            }
+            final String request = "START SHELL COMMAND " + STAFUtil.wrapData(killCmd + pid) +
                     " WAIT " + timeout + "s RETURNSTDOUT STDERRTOSTDOUT";
-            final STAFResult result = resumeHandle.submit2(machine, SERVICE, request);
+            final STAFResult result = resumeHandle.submit2(machine.getHostName(), SERVICE, request);
             if (result.rc != 0) {
                 System.out.println("ERROR: STAF " + machine + " " + SERVICE + " " + request +
                         " RC: " + result.rc + ", Result: " + result.result);
