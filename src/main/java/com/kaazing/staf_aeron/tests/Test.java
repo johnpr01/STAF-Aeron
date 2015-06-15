@@ -44,6 +44,7 @@ public abstract class Test implements Runnable
     protected String embedded = "";
     protected static final String PUB = "uk.co.real_logic.aeron.tools.PublisherTool";
     protected static final String SUB = "uk.co.real_logic.aeron.tools.SubscriberTool";
+    protected static final String DRIVER = "uk.co.real_logic.aeron.driver.MediaDriver";
 
     public Test()
     {
@@ -68,15 +69,65 @@ public abstract class Test implements Runnable
 
     public abstract void run();
 
-    public void cleanup(boolean dirNums)
+    protected void startProcess(final String machine, final String command, final String name, final int timeout)
+    {
+        processes.put(name, new AeronSTAFProcess(machine, command, name, latch, timeout));
+    }
+
+    protected void killProcess(final String name, boolean countdown)
+    {
+        processes.get(name).kill();
+        processes.remove(name);
+
+        if (countdown) {
+            latch.countDown();
+        }
+    }
+
+    protected void pauseProcess(final String name) { processes.get(name).pause(); }
+
+    protected void resumeProcess(final String name) { processes.get(name).resume(); }
+
+    public abstract void validate();
+
+    protected int getPort(String machine)
+    {
+        synchronized (this) {
+            boolean found = false;
+            if (currentPort == PORT_MAX) {
+                currentPort = PORT_MIN;
+            }
+            try {
+                do {
+                    String command = "java -cp staf-aeron.jar com.kaazing.staf_aeron.util.PortStatus " + currentPort;
+                    String timeout = "5s";
+                    final String request = "START SHELL COMMAND " + STAFUtil.wrapData(command) +
+                            " WAIT " + timeout + " RETURNSTDOUT STDERRTOSTDOUT";
+                    STAFHandle tmp = new STAFHandle("port");
+                    STAFResult result = tmp.submit2(machine, "Process", request);
+                    if (result.rc != 0) {
+                        found = false;
+                        currentPort++;
+                    } else {
+                        found = true;
+                    }
+                    tmp.unRegister();
+                } while (!found);
+
+                return currentPort++;
+
+            } catch (Exception e) {
+                return 0;
+            }
+        }
+    }
+
+    protected void cleanup()
     {
         for (int i = 0; i < hosts.length; i++) {
             String f = null;
-            if (dirNums) {
-                f = aeronDirs[i] + i;
-            } else {
-                f = aeronDirs[i];
-            }
+            f = aeronDirs[i] + "-" + i;
+
             f = f.substring(f.indexOf('=') + 1);
             try {
 
@@ -113,56 +164,41 @@ public abstract class Test implements Runnable
 
             }
         }
-
-
     }
 
-
-    protected void startProcess(final String machine, final String command, final String name, final int timeout)
+    protected boolean checkForFiles(String ip, String dir)
     {
-        processes.put(name, new AeronSTAFProcess(machine, command, name, latch, timeout));
-    }
+        String f = dir;
 
-    protected void killProcess(final String name)
-    {
-        processes.get(name).kill();
-    }
+        f = f.substring(f.indexOf('=') + 1);
+        try {
+            String command = "java -cp staf-aeron.jar com.kaazing.staf_aeron.util.CheckForFiles " + f;
+            String timeout = "15s";
+            final String request = "START SHELL COMMAND " + STAFUtil.wrapData(command) +
+                    " WAIT " + timeout + " RETURNSTDOUT STDERRTOSTDOUT";
+            STAFHandle tmp = new STAFHandle("FileCheck");
+            STAFResult result = tmp.submit2(ip, "Process", request);
 
-    protected void pauseProcess(final String name) { processes.get(name).pause(); }
+            if (result.rc != 0) {
+                return false;
+            } else {
+                try {
+                    final Map resultMap = (Map) result.resultObj;
+                    final String processRC = (String) resultMap.get("rc");
 
-    protected void resumeProcess(final String name) { processes.get(name).resume(); }
-
-    public abstract Test validate();
-
-    protected int getPort(String machine)
-    {
-        synchronized (this) {
-            boolean found = false;
-            if (currentPort == PORT_MAX) {
-                currentPort = PORT_MIN;
-            }
-            try {
-                do {
-                    String command = "java -cp staf-aeron.jar com.kaazing.staf_aeron.util.PortStatus " + currentPort;
-                    String timeout = "5s";
-                    final String request = "START SHELL COMMAND " + STAFUtil.wrapData(command) +
-                            " WAIT " + timeout + " RETURNSTDOUT STDERRTOSTDOUT";
-                    STAFHandle tmp = new STAFHandle("port");
-                    STAFResult result = tmp.submit2(machine, "Process", request);
-                    if (result.rc != 0) {
-                        found = false;
-                        currentPort++;
+                    if (!processRC.equals("0")) {
+                        return false;
                     } else {
-                        found = true;
+                        return true;
                     }
-                    tmp.unRegister();
-                } while (!found);
-
-                return currentPort++;
-
-            } catch (Exception e) {
-                return 0;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
+            tmp.unRegister();
+        } catch (Exception e) {
+            return false;
         }
+        return false;
     }
 }
