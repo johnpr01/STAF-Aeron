@@ -30,56 +30,65 @@ public class Test0055 extends Test
 {
     public Test0055(YAMLTestCase testCase)
     {
-        STAFHost host1 = testCase.getStafHosts().get(0);
-        STAFHost host2 = testCase.getStafHosts().get(1);
-
-        processes = new HashMap<String, AeronSTAFProcess>();
-        latch = new CountDownLatch(2);
-        final String aeronDir = "-Daeron.dir=" + host1.getTmpDir() + host1.getPathSeperator() + testCase.getName();
-        int port = getPort(host1.getHostName());
-
-        startProcess(host1.getHostName(),
-                host1.getJavaPath() + host1.getPathSeperator() + "java " + aeronDir + host1.getPathSeperator() + "sub" + host1.getProperties() +
-                        " -cp " + host1.getClasspath() +
-                        " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " -c=udp://localhost:" + port + " " + host1.getOptions(),
-                "Test0055-sub", 10);
-        startProcess(host2.getHostName(),
-                host2.getJavaPath() + host2.getPathSeperator() + "java " + aeronDir + "/pub" + host2.getProperties() +
-                        " -cp " + host2.getClasspath() +
-                        " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " -c=udp://localhost:" + port + " " + host2.getOptions(),
-                "Test0055-pub", 10);
-        // allow the publisher to send for a few seconds before suspending the media driver
-        try
-        {
-            Thread.sleep(10000);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        // suspend the mediadriver.
-        // resume the mediadriver before the publisher's media driver timer expires
-
-        try
-        {
-            latch.await();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        super(testCase);
     }
 
     public void run()
-    {}
+    {
+        int port = getPort(hosts[0].getIpAddress());
+        String channel = "udp://" + hosts[0].getIpAddress() + ":" + port;
+        String[] commands = { SUB, PUB };
+        String[] types = { "sub", "pub" };
+
+        startProcess(hosts[0].getIpAddress(),
+                hosts[0].getJavaPath() + hosts[0].getPathSeperator() + "java " + aeronDirs[0] +
+                        hosts[0].getPathSeperator() + " " + "-Daeron.dir.delete.on.exit=true" +
+                        " -cp " + hosts[0].getClasspath() + " " + DRIVER,
+                testCase.getName() + "-DRIVER", -1);
+
+        for (int i = 0; i < hosts.length; i++) {
+            startProcess(hosts[i].getHostName(),
+                    hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
+                            hosts[i].getPathSeperator() + " " + hosts[i].getProperties() +
+                            " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
+                            embedded + " -c=" + channel + " " + hosts[i].getOptions(),
+                    testCase.getName() + "-" + types[i], 60);
+        }
+        try
+        {
+            Thread.sleep(10000);
+
+            killProcess(testCase.getName() + "-DRIVER", false);
+
+            if (checkForFiles(hosts[0].getIpAddress(), aeronDirs[0])) {
+                System.out.println(testCase.getName() + " failed!, The driver files were not cleaned up.");
+                for (int i = 0; i < hosts.length; i++) {
+                    killProcess(testCase.getName() + "-" + types[i], true);
+                }
+            } else {
+                Thread.sleep(3000);
+
+                startProcess(hosts[0].getIpAddress(),
+                        hosts[0].getJavaPath() + hosts[0].getPathSeperator() + "java " + aeronDirs[0] +
+                                hosts[0].getPathSeperator() + " " +
+                                " -cp " + hosts[0].getClasspath() + " " + DRIVER,
+                        testCase.getName() + "-DRIVER", -1);
+            }
+            latch.await();
+
+            killProcess(testCase.getName() + "-DRIVER", false);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        validate();
+        cleanup();
+    }
+
 // the expected result for the suspend case: while the media driver is suspended, the publisher will be able to send
 // until it is flow controlled. Once the media driver resumes, the subscriber will receive a burst of data
-    public Test validate()
+    public void validate()
     {
-        final Map result1 = processes.get("Test0055-sub").getResults();
-        final Map result2 = processes.get("Test0055-pub").getResults();
-        return this;
     }
 }

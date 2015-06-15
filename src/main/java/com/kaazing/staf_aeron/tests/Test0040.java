@@ -16,40 +16,31 @@
 
 package com.kaazing.staf_aeron.tests;
 
-import com.kaazing.staf_aeron.AeronSTAFProcess;
-import com.kaazing.staf_aeron.STAFHost;
 import com.kaazing.staf_aeron.YAMLTestCase;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
 public class Test0040 extends Test
 {
     public Test0040(YAMLTestCase testCase)
     {
-        STAFHost host1 = testCase.getStafHosts().get(0);
-        STAFHost host2 = testCase.getStafHosts().get(1);
+        super(testCase);
 
-        processes = new HashMap<String, AeronSTAFProcess>();
-        latch = new CountDownLatch(2);
-        final String aeronDir = "-Daeron.dir=" + host1.getTmpDir() + host1.getPathSeperator() + testCase.getName();
-        int port = getPort(host1.getHostName());
+    }
 
-        startProcess(host1.getHostName(),
-                host1.getJavaPath() + host1.getPathSeperator() + "java " + aeronDir + host1.getPathSeperator() + "sub" + host1.getProperties() +
-                        " -cp " + host1.getClasspath() +
-                        " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " --driver=embedded -r=5Mbps -c=udp://localhost:" + port + " " + host1.getOptions(),
-                "Test0040-sub", 10);
-        startProcess(host2.getHostName(),
-                host2.getJavaPath() + host2.getPathSeperator() + "java " + aeronDir + "/pub" + host2.getProperties() +
-                        " -cp " + host2.getClasspath() +
-                        " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " --driver=embedded -r=10Mbps -c=udp://localhost:" + port + " " + host2.getOptions(),
-                "Test0040-pub", 10);
+    public void run()
+    {
+        int port = getPort(hosts[0].getIpAddress());
+        String channel = "udp://" + hosts[0].getIpAddress() + ":" + port;
+        String[] commands = { SUB, PUB };
+        String[] types = { "sub", "pub" };
 
+        for (int i = 0; i < hosts.length; i++) {
+            startProcess(hosts[i].getIpAddress(),
+                    hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
+                            hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
+                            " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
+                            embedded + " -c=" + channel + " " + hosts[i].getOptions(),
+                    testCase.getName() + "-" + types[i], 60);
+        }
         try
         {
             latch.await();
@@ -58,16 +49,12 @@ public class Test0040 extends Test
         {
             e.printStackTrace();
         }
+        validate();
+        cleanup();
     }
 
-    public void run()
-    {}
 
-
-    public Test validate()
+    public void validate()
     {
-        final Map result1 = processes.get("Test0040-sub").getResults();
-        final Map result2 = processes.get("Test0040-pub").getResults();
-        return this;
     }
 }

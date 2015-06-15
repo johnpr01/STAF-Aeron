@@ -16,14 +16,8 @@
 
 package com.kaazing.staf_aeron.tests;
 
-import com.kaazing.staf_aeron.AeronSTAFProcess;
-import com.kaazing.staf_aeron.STAFHost;
-import com.kaazing.staf_aeron.YAMLTestCase;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
+import com.kaazing.staf_aeron.YAMLTestCase;
 
 public class Test0125 extends Test
 {
@@ -33,61 +27,31 @@ public class Test0125 extends Test
 
     public void run()
     {
-        int port1 = getPort(hosts[0].getHostName());
-        int port2 = getPort(hosts[1].getHostName());
-        int port3 = getPort(hosts[2].getHostName());
-        int port4 = getPort(hosts[3].getHostName());
-        int port5 = getPort(hosts[4].getHostName());
-        String channel1 = "-c=udp://" + hosts[0].getIpAddress() + ":" + port1;
-        String channel2 = "-c=udp://" + hosts[1].getIpAddress() + ":" + port2;
-        String channel3 = "-c=udp://" + hosts[2].getIpAddress() + ":" + port3;
-        String channel4 = "-c=udp://" + hosts[3].getIpAddress() + ":" + port4;
-        String channel5 = "-c=udp://" + hosts[4].getIpAddress() + ":" + port5;
+        int[] ports = {
+                getPort(hosts[0].getIpAddress()),
+                getPort(hosts[1].getIpAddress()),
+                getPort(hosts[2].getIpAddress()),
+                getPort(hosts[3].getIpAddress()),
+                getPort(hosts[4].getIpAddress())
+        };
+        String[] channels = {
+                "udp://" + hosts[0].getIpAddress() + ":" + ports[0],
+                "udp://" + hosts[1].getIpAddress() + ":" + ports[1],
+                "udp://" + hosts[2].getIpAddress() + ":" + ports[2],
+                "udp://" + hosts[3].getIpAddress() + ":" + ports[3],
+                "udp://" + hosts[4].getIpAddress() + ":" + ports[4]
+        };
+
         String[] commands = { SUB, SUB, SUB, SUB, SUB, PUB, PUB, PUB, PUB, PUB };
-        String[] types = { "sub", "sub", "sub", "sub", "sub", "pub", "pub", "pub", "pub", "pub" };
-        String[] subNames = { "sub1", "sub2", "sub3", "sub4", "sub5", "pub1", "pub2", "pub3", "pub4", "pub5" };
+        String[] types = { "sub1", "sub2", "sub3", "sub4", "sub5", "pub1", "pub2", "pub3", "pub4", "pub5" };
 
         for (int i = 0; i < hosts.length; i++) {
-            if (i == 0 || i == 5) {
-                startProcess(hosts[i].getHostName(),
-                        hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] + i +
-                                hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
-                                " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
-                                embedded + " " + channel1 + " " + hosts[i].getOptions(),
-                        testCase.getName() + "-" + subNames[i], 120);
-            }
-            if (i == 1 || i == 6) {
-                startProcess(hosts[i].getHostName(),
-                        hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] + i +
-                                hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
-                                " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
-                                embedded + " " + channel2 + " " + hosts[i].getOptions(),
-                        testCase.getName() + "-" + subNames[i], 120);
-            }
-            if (i == 2 || i == 7) {
-                startProcess(hosts[i].getHostName(),
-                        hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] + i +
-                                hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
-                                " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
-                                embedded + " " + channel3 + " " + hosts[i].getOptions(),
-                        testCase.getName() + "-" + subNames[i], 120);
-            }
-            if (i == 3 || i == 8) {
-                startProcess(hosts[i].getHostName(),
-                        hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] + i +
-                                hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
-                                " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
-                                embedded + " " + channel4 + " " + hosts[i].getOptions(),
-                        testCase.getName() + "-" + subNames[i], 120);
-            }
-            if (i == 4 || i == 9) {
-                startProcess(hosts[i].getHostName(),
-                        hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] + i +
-                                hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
-                                " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
-                                embedded + " " + channel5 + " " + hosts[i].getOptions(),
-                        testCase.getName() + "-" + subNames[i], 120);
-            }
+            startProcess(hosts[i].getHostName(),
+                    hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
+                            hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
+                            " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
+                            embedded + " -c" + channels[i % 5] + " " + hosts[i].getOptions(),
+                    testCase.getName() + "-" + types[i], 120);
         }
         try
         {
@@ -98,21 +62,11 @@ public class Test0125 extends Test
             e.printStackTrace();
         }
 
-        cleanup(true);
+        cleanup();
     }
 
-    public Test validate()
+    public void validate()
     {
-        final Map result1 = processes.get("Test0110-sub1").getResults();
-        final Map result2 = processes.get("Test0110-sub2").getResults();
-        final Map result3 = processes.get("Test0110-sub3").getResults();
-        final Map result4 = processes.get("Test0110-sub5").getResults();
-        final Map result5 = processes.get("Test0110-sub6").getResults();
-        final Map result6 = processes.get("Test0000-pub1").getResults();
-        final Map result7 = processes.get("Test0000-pub2").getResults();
-        final Map result8 = processes.get("Test0000-pub3").getResults();
-        final Map result9 = processes.get("Test0000-pub4").getResults();
-        final Map result10 = processes.get("Test0000-pub5").getResults();
-        return this;
+
     }
 }

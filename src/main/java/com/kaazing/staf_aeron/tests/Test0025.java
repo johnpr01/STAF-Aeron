@@ -14,16 +14,24 @@
  * limitations under the License.
  */
 
+/*
+id0025: Loss Test
+Summary:
+    Subscriber disconnects and reconnects  when unrecoverable loss occurs.
+Tasks:
+    While a publisher is actively sending messages to subscriber, the driver associated with the subscriber
+    will periodically lose a percentage of messages as documented in the TestPlanning Spreadsheet  under the ‘LossTest’ config options.
+    The subscriber can not keep up or recover (NAKs will NOT be sent for the missed messages).
+Expected Results:
+    The subscriber which is behind will disconnect and reconnect.  It should start receiving messages from the live stream.
+NOTE:
+    This scenario will be re-executed using the various config options documented in the TestPlanning SpreadSheet in the ‘LossTest’ section.
+ */
+
 package com.kaazing.staf_aeron.tests;
 
-import com.kaazing.staf_aeron.AeronSTAFProcess;
-import com.kaazing.staf_aeron.STAFHost;
 import com.kaazing.staf_aeron.YAMLTestCase;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 // For this test, set the loss rate to .02 on the mediadriver and disabled NAKS
 public class Test0025 extends Test
 {
@@ -34,8 +42,8 @@ public class Test0025 extends Test
 
     public void run()
     {
-        int port = getPort(hosts[0].getHostName());
-        String channel = "-c=udp://localhost:" + port;
+        int port = getPort(hosts[0].getIpAddress());
+        String channel = "udp://" + hosts[0].getIpAddress() + ":" + port;
         String[] commands = { SUB, PUB };
         String[] types = { "sub", "pub" };
 
@@ -44,7 +52,7 @@ public class Test0025 extends Test
                     hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
                             hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
                             " -cp " + hosts[i].getClasspath() + " " + commands[i] +
-                            embedded + " " + channel + " " + hosts[i].getOptions(),
+                            embedded + " -c=" + channel + " " + hosts[i].getOptions(),
                     testCase.getName() + "-" + types[i], 60);
         }
         try
@@ -55,15 +63,16 @@ public class Test0025 extends Test
         {
             e.printStackTrace();
         }
+        validate();
+        cleanup();
     }
+
 // Verification: The subscriber will only a few messages (or it may not receive any messages at all). Flow control
 // does not allow the publisher to overrun the subscriber.  With NAKS disabled, it will just block the publisher from
 // going any further.  The subscriber will consider the publisher to still be alive
 
-    public Test validate()
+    public void validate()
     {
-        final Map result1 = processes.get("Test0025-sub").getResults();
-        final Map result2 = processes.get("Test0025-pub").getResults();
-                return this;
+
     }
 }

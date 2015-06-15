@@ -30,57 +30,61 @@ public class Test0065 extends Test
 {
     public Test0065(YAMLTestCase testCase)
     {
-        STAFHost host1 = testCase.getStafHosts().get(0);
-        STAFHost host2 = testCase.getStafHosts().get(1);
-
-        processes = new HashMap<String, AeronSTAFProcess>();
-        latch = new CountDownLatch(2);
-        final String aeronDir = "-Daeron.dir=" + host1.getTmpDir() + host1.getPathSeperator() + testCase.getName();
-        int port = getPort(host1.getHostName());
-
-        startProcess(host1.getHostName(),
-                host1.getJavaPath() + host1.getPathSeperator() + "java " + aeronDir + host1.getPathSeperator() + "sub" + host1.getProperties() +
-                        " -cp " + host1.getClasspath() +
-                        " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " -c=udp://localhost:" + port + " " + host1.getOptions(),
-                "Test0065-sub", 10);
-        startProcess(host2.getHostName(),
-                host2.getJavaPath() + host2.getPathSeperator() + "java " + aeronDir + "/pub" + host2.getProperties() +
-                        " -cp " + host2.getClasspath() +
-                        " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " -c=udp://localhost:" + port + " " + host2.getOptions(),
-                "Test0065-pub", 10);
-        // allow the publisher to send for a few seconds before Killing the media driver on machine B
-        try
-        {
-            Thread.sleep(10000);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        // Kill the media driver on machine B
-        // Restart the media driver on machine B before the client media driver timer expires
-
-        try
-        {
-            latch.await();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        super(testCase);
     }
 
     public void run()
-    {}
+    {
+        int port = getPort(hosts[0].getIpAddress());
+        String channel = "udp://" + hosts[0].getIpAddress() + ":" + port;
+        String[] commands = { SUB, PUB };
+        String[] types = { "sub", "pub" };
+
+
+        for (int i = 0; i < hosts.length; i++) {
+            startProcess(hosts[i].getIpAddress(),
+                    hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
+                            hosts[0].getPathSeperator() + " " + "-Daeron.dir.delete.on.exit=false" +
+                            " -cp " + hosts[i].getClasspath() + " " + DRIVER,
+                    testCase.getName() + "-DRIVER-" + types[i], -1);
+
+            startProcess(hosts[i].getHostName(),
+                    hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
+                            hosts[i].getPathSeperator() + " " + hosts[i].getProperties() +
+                            " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
+                            embedded + " -c=" + channel + " " + hosts[i].getOptions(),
+                    testCase.getName() + "-" + types[i], 60);
+        }
+        try
+        {
+            Thread.sleep(10000);
+
+            killProcess(testCase.getName() + "-DRIVER-" + types[1]);
+
+
+            Thread.sleep(3000);
+
+            startProcess(hosts[1].getIpAddress(),
+                    hosts[1].getJavaPath() + hosts[1].getPathSeperator() + "java " + aeronDirs[1] +
+                            hosts[1].getPathSeperator() + " " + "-Daeron.dir.delete.on.exit=false" +
+                        " -cp " + hosts[1].getClasspath() + " " + DRIVER,
+                    testCase.getName() + "-DRIVER-" + types[1], -1);
+
+            latch.await();
+
+            killProcess(testCase.getName() + "-DRIVER-" + types[0]);
+            killProcess(testCase.getName() + "-DRIVER-" + types[1]);
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        validate();
+        cleanup();
+    }
 
 // Expected results: The clients should reconnect to the driver and communication should resume
 // Repeat the test suspending the media driver
-    public Test validate()
+    public void validate()
     {
-        final Map result1 = processes.get("Test0065-sub").getResults();
-        final Map result2 = processes.get("Test0065-pub").getResults();
-        return this;
     }
 }

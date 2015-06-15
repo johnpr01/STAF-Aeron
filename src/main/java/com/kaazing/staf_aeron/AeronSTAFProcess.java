@@ -35,6 +35,7 @@ public class AeronSTAFProcess
     private STAFResult result;
     private int pid = 0;
     protected static final String SERVICE = "Process";
+    private String request = "";
 
     public AeronSTAFProcess()
     {
@@ -60,8 +61,13 @@ public class AeronSTAFProcess
     public void run()
     {
         try {
-            final String request = "START SHELL COMMAND " + command +
-                    " WAIT " + timeout + "s RETURNSTDOUT STDERRTOSTDOUT";
+            if (timeout > 0) {
+                request = "START SHELL COMMAND " + command +
+                        " WAIT " + timeout + "s RETURNSTDOUT STDERRTOSTDOUT";
+            } else {
+                request = "START SHELL COMMAND " + command +
+                        " WAIT " + timeout + "s RETURNSTDOUT STDERRTOSTDOUT";
+            }
 
             Runnable task = () -> {
                 PrintWriter output = null;

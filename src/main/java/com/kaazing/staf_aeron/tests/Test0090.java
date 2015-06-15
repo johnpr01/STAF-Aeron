@@ -29,75 +29,71 @@ public class Test0090 extends Test
 {
     public Test0090(YAMLTestCase testCase)
     {
-        STAFHost host1 = testCase.getStafHosts().get(0);
-        STAFHost host2 = testCase.getStafHosts().get(1);
-        STAFHost host3 = testCase.getStafHosts().get(2);
-        STAFHost host4 = testCase.getStafHosts().get(3);
-
-        processes = new HashMap<String, AeronSTAFProcess>();
-        latch = new CountDownLatch(4);
-        final String aeronDir = "-Daeron.dir=" + host1.getTmpDir() + host1.getPathSeperator() + testCase.getName();
-        int port = getPort(host1.getHostName());
-        String channel = "-c=udp://localhost:" + port;
-        String embedded = testCase.getIsEmbedded() ? " --driver=embedded" :  "--driver=external";
-
-        startProcess(host1.getHostName(),
-                host1.getJavaPath() + host1.getPathSeperator() + "java " + aeronDir + host1.getPathSeperator() + "sub" + host1.getProperties() +
-                        " -cp " + host1.getClasspath() +
-                        " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " " + embedded + " " + channel + " " + host1.getOptions(),
-                "Test0090-sub1", 10);
-        startProcess(host1.getHostName(),
-                host2.getJavaPath() + host2.getPathSeperator() + "java " + aeronDir + host2.getPathSeperator() + "sub" + host2.getProperties() +
-                        " -cp " + host2.getClasspath() +
-                        " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " " + embedded + " " + channel + " " + host2.getOptions(),
-                "Test0090-sub2", 10);
-        startProcess(host3.getHostName(),
-                host3.getJavaPath() + host3.getPathSeperator() + "java " + aeronDir + host3.getPathSeperator() + "sub" + host3.getProperties() +
-                        " -cp " + host3.getClasspath() +
-                        " uk.co.real_logic.aeron.tools.SubscriberTool" +
-                        " --driver=embedded -r 100kbps -c=udp://localhost:" + port + " " + host3.getOptions(),
-                "Test0090-sub3", 10);
-        startProcess(host4.getHostName(),
-                host4.getJavaPath() + host4.getPathSeperator() + "java " + aeronDir + "/pub" + host4.getProperties() +
-                        " -cp " + host4.getClasspath() +
-                        " uk.co.real_logic.aeron.tools.PublisherTool" +
-                        " " + embedded + " " + channel + " " + host4.getOptions(),
-                "Test0090-pub", 10);
-        // allow the publisher to send for a few seconds before killing one of the subscribers
-        try
-        {
-            Thread.sleep(10000);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        // Kill one of the subscribers
-        killProcess("Test0090-sub2");
-        try
-        {
-            latch.await();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        super(testCase);
     }
 
     public void run()
-    {}
+    {
+        int[] ports = {
+                getPort(hosts[0].getIpAddress()),
+                getPort(hosts[1].getIpAddress())
+        };
+
+        String[] channels = {
+                "udp://" + hosts[0].getIpAddress() + ":" + ports[0],
+                "udp://" + hosts[1].getIpAddress() + ":" + ports[1]
+        };
+        String[] commands = { SUB, SUB, PUB };
+        String[] types = { "sub", "sub2", "pub" };
+
+        for (int i = 0; i < hosts.length; i++) {
+            startProcess(hosts[i].getIpAddress(),
+                    hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
+                            hosts[0].getPathSeperator() + " " + "-Daeron.dir.delete.on.exit=false" +
+                            " -cp " + hosts[i].getClasspath() + " " + DRIVER,
+                    testCase.getName() + "-DRIVER-" + types[i], -1);
+
+            if (i < hosts.length - 1) {
+                startProcess(hosts[i].getIpAddress(),
+                        hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
+                                hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
+                                " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
+                                embedded + " -c=" + channels[i] + " " + hosts[i].getOptions(),
+                        testCase.getName() + "-" + types[i], 60);
+            } else {
+                startProcess(hosts[i].getIpAddress(),
+                        hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
+                                hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
+                                " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
+                                embedded + " -c=" + channels[0] + "," + channels[1] + " " + hosts[i].getOptions(),
+                        testCase.getName() + "-" + types[i], 60);
+            }
+        }
+
+        try
+        {
+            Thread.sleep(3000);
+            killProcess(testCase.getName() + "-" + types[0], true);
+
+            latch.await();
+
+            killProcess(testCase.getName() + "-DRIVER-" + types[0], false);
+            killProcess(testCase.getName() + "-DRIVER-" + types[1], false);
+            killProcess(testCase.getName() + "-DRIVER-" + types[2], false);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        validate();
+        cleanup();
+    }
 
 // Expected results: Sub 1 and Sub 3 continue to receive messages from the publisher.
 // Repeat the scenario suspending one of the subscribers
 
-    public Test validate()
+    public void validate()
     {
-        final Map result1 = processes.get("Test0090-sub1").getResults();
-        final Map result2 = processes.get("Test0090-sub2").getResults();
-        final Map result3 = processes.get("Test0090-sub3").getResults();
-        final Map result4 = processes.get("Test0090-pub").getResults();
-        return this;
+
     }
 }

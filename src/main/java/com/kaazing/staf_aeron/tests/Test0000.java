@@ -14,11 +14,22 @@
  * limitations under the License.
  */
 
+/*
+id0000: Basic Test
+        Summary:
+            A publisher sends 1 million messages  to a single subscriber.
+        Tasks:
+            A subscriber is started and sends a subscription using a particular stream id.
+            A publisher is started and receives a subscription for the stream id of interest, the publisher then sends data.
+        Expected Results:
+            The subscriber receives all messages sent by the publisher.  Verify no memory leaks are reported.
+        NOTES:
+            Repeat test scenario using the various config options documented in the TestPLanning spreadsheet for the ‘basic test’.
+*/
+
 package com.kaazing.staf_aeron.tests;
 
-
 import com.kaazing.staf_aeron.YAMLTestCase;
-import java.util.concurrent.CountDownLatch;
 
 public class Test0000 extends Test
 {
@@ -30,7 +41,7 @@ public class Test0000 extends Test
     public void run()
     {
         int port = getPort(hosts[0].getHostName());
-        String channel = "-c=udp://" + hosts[0].getIpAddress() + ":" + port;
+        String channel = "udp://" + hosts[0].getIpAddress() + ":" + port;
         String[] commands = { SUB, PUB };
         String[] types = { "sub", "pub" };
 
@@ -39,7 +50,7 @@ public class Test0000 extends Test
                     hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
                             hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
                             " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
-                            embedded + " " + channel + " " + hosts[i].getOptions(),
+                            embedded + " -c=" + channel + " " + hosts[i].getOptions(),
                     testCase.getName() + "-" + types[i], 60);
         }
         try
@@ -51,13 +62,12 @@ public class Test0000 extends Test
             e.printStackTrace();
         }
         validate();
-        cleanup(false);
+        cleanup();
     }
 
-    public Test validate()
+    public void validate()
     {
         //final Map result1 = processes.get("Test0000-sub").getResults();
         //final Map result2 = processes.get("Test0000-pub").getResults();
-        return this;
     }
 }

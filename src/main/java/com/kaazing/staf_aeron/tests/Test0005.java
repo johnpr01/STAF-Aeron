@@ -14,10 +14,25 @@
  * limitations under the License.
  */
 
+/*
+id0005: Basic Test
+Summary:
+    A subscriber is started after the publisher.
+Tasks:
+    Start a single publisher.
+    Wait a few seconds
+    Start a single subscriber using the stream ID of interest.
+Expected Results:
+    Before the subscriber is started, the senders offer will fail.  After the subscriber is known, the sender will be
+    allowed to send and the subscriber should receive all messages
+NOTES:
+    Repeat test scenario using the various config options documented in the TestPLanning spreadsheet for the ‘BasicTest’.
+
+ */
+
 package com.kaazing.staf_aeron.tests;
 
 import com.kaazing.staf_aeron.YAMLTestCase;
-import java.util.concurrent.CountDownLatch;
 
 public class Test0005 extends Test
 {
@@ -29,7 +44,7 @@ public class Test0005 extends Test
     public void run()
     {
         int port = getPort(hosts[0].getHostName());
-        String channel = "-c=udp://" + hosts[1].getIpAddress() + ":" + port;
+        String channel = "udp://" + hosts[1].getIpAddress() + ":" + port;
         String[] commands = { PUB, SUB };
         String[] types = { "pub", "sub" };
 
@@ -45,7 +60,7 @@ public class Test0005 extends Test
                     hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
                             hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
                             " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
-                            embedded + " " + channel + " " + hosts[i].getOptions(),
+                            embedded + " -c=" + channel + " " + hosts[i].getOptions(),
                     testCase.getName() + "-" + types[i], 60);
 
         }
@@ -59,13 +74,12 @@ public class Test0005 extends Test
         {
             e.printStackTrace();
         }
-        cleanup(false);
+        cleanup();
     }
 
-    public Test validate()
+    public void validate()
     {
         //final Map result1 = processes.get("Test0005-sub").getResults();
         //final Map result2 = processes.get("Test0005-pub").getResults();
-        return this;
     }
 }
