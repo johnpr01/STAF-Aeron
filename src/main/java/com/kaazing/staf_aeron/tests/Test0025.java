@@ -51,7 +51,7 @@ public class Test0025 extends Test
             startProcess(hosts[i],
                     hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
                             hosts[i].getPathSeperator() + types[i] + " " + hosts[i].getProperties() +
-                            " -cp " + hosts[i].getClasspath() + " " + commands[i] +
+                            " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
                             embedded + " -c=" + channel + " " + hosts[i].getOptions(),
                     testCase.getName() + "-" + types[i], 60);
         }

@@ -48,7 +48,7 @@ public class   AeronSTAFRunner
         }
 
         YAMLTestCases cases = tests;
-        threadPool = Executors.newFixedThreadPool(2);
+        threadPool = Executors.newFixedThreadPool(1);
         Class test = null;
         // Loop through each test case and start the corresponding class using the test's name as specified via YAML
         for(YAMLTestCase t : cases.getTestCases()){

@@ -60,6 +60,7 @@ public class AeronSTAFProcess
 
     public void run()
     {
+        System.out.println("\n\n" + command);
         try {
             if (timeout > 0) {
                 request = "START SHELL COMMAND " + command +
@@ -83,6 +84,12 @@ public class AeronSTAFProcess
                     try {
                         System.out.println("Test: " + name + " failed! Timed out");
                         output.println("Test Failure: " + name + " " + "Timed out.\n");
+                        final Map resultMap = (Map) result.resultObj;
+                        final String processRC = (String) resultMap.get("rc");
+                        final List returnedFileList = (List) resultMap.get("fileList");
+                        final Map stdoutMap = (Map) returnedFileList.get(0);
+                        System.out.println((String) stdoutMap.get("data"));
+                        output.println((String) stdoutMap.get("data"));
                         kill();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -129,9 +136,10 @@ public class AeronSTAFProcess
                 final LinkedList resultMap2 = (LinkedList) result2.resultObj;
                 for (Object item : resultMap2) {
                     HashMap map = (HashMap)item;
+                    //System.out.println("\n\n" + (String)map.get("command") + "\n" + command + "\n\n");
                     if (((String)map.get("command")).trim().equalsIgnoreCase(command.trim())) {
                         pid = Integer.parseInt((String)map.get("pid"));
-                        System.out.print("Process pid is : " + pid);
+                        //System.out.println("Process pid is : " + pid);
                     }
 
                 }

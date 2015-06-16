@@ -1,17 +1,52 @@
 testCases:
-- name: Test0000
-  hosts: [buckwasher, buckwasher]
-  options: [-m 1000 --verify yes, "--verify yes -r 1000m@max,5s@0mps"]
-  properties: [-Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536]
-  isEmbedded: true
-- name: Test0005
-  hosts: [buckwasher, buckwasher]
-  options: ["--verify yes -r 1000m@max,7s@0mps", -m 1000 --verify yes]
-  properties: [-Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536]
-  isEmbedded: true
-- name: Test0125
-  hosts: [buckwasher, buckwasher, buckwasher, buckwasher, buckwasher, buckwasher, buckwasher, buckwasher, buckwasher, buckwasher]
-  options: [--verify yes -m 1000, --verify yes -m 1000, --verify yes -m 1000, --verify yes -m 1000, --verify yes -m 1000, "--verify yes -r 1000m@max,20s@0mps", "--verify yes -r 1000m@max,20s@0mps", "--verify yes -r 1000m@max,20s@0mps", "--verify yes -r 1000m@max,20s@0mps", "--verify yes -r 1000m@max,20s@0mps"]
-  properties: [-Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536]
-  isEmbedded: true
+#- name: Test0000
+#  hosts: [buckwasher, cooper]
+#  options: [-m 1000 --verify yes, "--verify yes -r 1000m@max,5s@0mps"]
+#  properties: [-Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536]
+#  isEmbedded: true
+#- name: Test0005
+#  hosts: [buckwasher, cooper]
+#  options: ["--verify yes -r 1000m@max,7s@0mps", -m 1000 --verify yes]
+#  properties: [-Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536]
+#  isEmbedded: true
+#- name: Test0025
+#  hosts: [buckwasher, cooper]
+#  options: [-m 750000 --verify yes, "--verify yes -r 1000000m@50Mbps,10s@0mps"]
+#  properties: [-Daeron.term.buffer.lenth=65536 -Daeron.debug.data.loss.rate=0.25 -Daeron.driver.disable.naks=true, -Daeron.term.buffer.length=65536]
+#  isEmbedded: true
+#- name: Test0035
+#  hosts: [buckwasher, cooper]
+#  options: [-r 1000000m@25Mbps --verify yes, "--verify yes -r 1000000m@50Mbps,10s@0mps"]
+#  properties: [-Daeron.term.buffer.lenth=65536, -Daeron.term.buffer.length=65536]
+#  isEmbedded: true
+#- name: Test0040
+#  hosts: [buckwasher, buckwasher]
+#  options: [-r 1000000m@25Mbps --verify yes, "--verify yes -r 1000000m@50Mbps,10s@0mps"]
+#  properties: [-Daeron.term.buffer.lenth=65536, -Daeron.term.buffer.length=65536]
+#  isEmbedded: true
+#- name: Test0045
+#  hosts: [buckwasher, cooper, buckwasher, cooper]
+#  options: [-r 100000m@5Mbps --verify yes, -r 100000m@50Mbps --verify yes, -r 100000m@25Mbps --verify yes, "--verify yes -r 300000m@20Mbps,10s@0mps"]
+#  properties: [-Daeron.term.buffer.lenth=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536]
+#  isEmbedded: true
+#- name: Test0050
+#  hosts: [cooper, cooper, cooper, cooper]
+#  options: [-r 100000m@5Mbps --verify yes, -r 100000m@50Mbps --verify yes, -r 100000m@25Mbps --verify yes, "--verify yes -r 300000m@20Mbps,10s@0mps"]
+#  properties: [-Daeron.term.buffer.lenth=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536]
+#  isEmbedded: true
+- name: Test0055
+  hosts: [buckwasher, buckwasher, cooper, cooper]
+  options: ["", -m 10000 --verify yes, "","--verify yes -r 10000m@10mps,5s@0mps"]
+  properties: [-Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536]
+  isEmbedded: false
+#- name: Test0060
+#  hosts: [buckwasher, buckwasher, cooper, cooper]
+#  options: ["",-m 10000 --verify yes, "","--verify yes -r 10000m@10mps,5s@0mps"]
+#  properties: [-Daeron.term.buffer.length=65536, "", -Daeron.term.buffer.length=65536, ""]
+#  isEmbedded: false
+#- name: Test0125
+#  hosts: [buckwasher, cooper, buckwasher, cooper, buckwasher, cooper, buckwasher, cooper, buckwasher, cooper]
+#  options: [--verify yes -m 1000, --verify yes -m 1000, --verify yes -m 1000, --verify yes -m 1000, --verify yes -m 1000, "--verify yes -r 1000m@max,20s@0mps", "--verify yes -r 1000m@max,20s@0mps", "--verify yes -r 1000m@max,20s@0mps", "--verify yes -r 1000m@max,20s@0mps", "--verify yes -r 1000m@max,20s@0mps"]
+#  properties: [-Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536, -Daeron.term.buffer.length=65536]
+#  isEmbedded: true
 

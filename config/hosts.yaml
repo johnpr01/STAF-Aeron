@@ -5,6 +5,12 @@ hosts:
   classpath: "/home/pjohnson/tools.jar"
   javaPath: "/opt/jdk1.8.0_05/bin"
   tmpDir: "/tmp/prj"
+- hostName: cooper
+  ipAddress: "192.168.14.31"
+  OS: "linux"
+  classpath: "/home/pjohnson/tools.jar"
+  javaPath: "/opt/jdk1.8.0_05/bin"
+  tmpDir: "/tmp/prj"
 - hostName: mtserver
   ipAddress: "192.168.14.12"
   OS: "linux"

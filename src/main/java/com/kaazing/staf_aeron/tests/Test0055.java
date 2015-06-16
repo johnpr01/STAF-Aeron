@@ -37,28 +37,30 @@ public class Test0055 extends Test
     {
         int port = getPort(hosts[0]);
         String channel = "udp://" + hosts[0].getIpAddress() + ":" + port;
-        String[] commands = { SUB, PUB };
-        String[] types = { "sub", "pub" };
-
-        startProcess(hosts[0],
-                hosts[0].getJavaPath() + hosts[0].getPathSeperator() + "java " + aeronDirs[0] +
-                        hosts[0].getPathSeperator() + " " + "-Daeron.dir.delete.on.exit=true" +
-                        " -cp " + hosts[0].getClasspath() + " " + DRIVER,
-                testCase.getName() + "-DRIVER", -1);
+        String[] commands = { DRIVER, SUB, DRIVER, PUB };
+        String[] types = { "driver1", "sub", "driver2", "pub" };
 
         for (int i = 0; i < hosts.length; i++) {
-            startProcess(hosts[i],
-                    hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
-                            hosts[i].getPathSeperator() + " " + hosts[i].getProperties() +
-                            " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
-                            embedded + " -c=" + channel + " " + hosts[i].getOptions(),
-                    testCase.getName() + "-" + types[i], 60);
+            if (commands[i].equalsIgnoreCase(DRIVER)) {
+                startProcess(hosts[i],
+                        hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
+                                hosts[i].getPathSeperator() + " " + hosts[i].getProperties() +
+                                " -cp " + hosts[i].getClasspath() + " " + commands[i],
+                        testCase.getName() + "-" + types[i], 600);
+            } else {
+                startProcess(hosts[i],
+                        hosts[i].getJavaPath() + hosts[i].getPathSeperator() + "java " + aeronDirs[i] +
+                                hosts[i].getPathSeperator() + " " + hosts[i].getProperties() +
+                                " -cp " + hosts[i].getClasspath() + " " + commands[i] + " " +
+                                "-c=" + channel + " " + hosts[i].getOptions(),
+                        testCase.getName() + "-" + types[i], 60);
+            }
         }
         try
         {
             Thread.sleep(10000);
 
-            killProcess(testCase.getName() + "-DRIVER", false);
+            killProcess(testCase.getName() + "-driver1", false);
 
             if (checkForFiles(hosts[0].getIpAddress(), aeronDirs[0])) {
                 System.out.println(testCase.getName() + " failed!, The driver files were not cleaned up.");
@@ -72,11 +74,11 @@ public class Test0055 extends Test
                         hosts[0].getJavaPath() + hosts[0].getPathSeperator() + "java " + aeronDirs[0] +
                                 hosts[0].getPathSeperator() + " " +
                                 " -cp " + hosts[0].getClasspath() + " " + DRIVER,
-                        testCase.getName() + "-DRIVER", -1);
+                        testCase.getName() + "-driver1", -1);
             }
             latch.await();
 
-            killProcess(testCase.getName() + "-DRIVER", false);
+            killProcess(testCase.getName() + "-driver2", false);
         }
         catch (Exception e)
         {
